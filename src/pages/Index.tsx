@@ -11,6 +11,37 @@ const grammarGoals: GrammarItem[] = [
     name: "Naamwoorden",
     children: ["Lidwoord", "Zelfstandig naamwoord", "Bijvoeglijk naamwoord", "Telwoord"],
   },
+  {
+    name: "Voornaamwoorden",
+    children: ["Persoonlijk vnw", "Bezittelijk vnw", "Aanwijzend vnw", "Onbepaald vnw", "Vragend vnw"],
+  },
+  {
+    name: "Taalstructurerende woorden",
+    children: ["Voorzetsel", "Voegwoord"],
+  },
+  {
+    name: "Werkwoordstijden",
+    children: ["Onvoltooid tegenwoordige tijd"],
+  },
+  {
+    name: "Specifieke werkwoordsvormen",
+    children: ["Hebben en zijn in de ott", "Onpersoonlijke ww"],
+  },
+  {
+    name: "Complexe werkwoordconstructies",
+    children: ["Modale werkwoorden"],
+  },
+  {
+    name: "Zinsstructuren",
+    children: ["Enkelvoudige zinnen"],
+  },
+  {
+    name: "Zinsdelen",
+    children: ["Zinsdelen aanduiden"],
+  },
+  {
+    name: "Woordsoorten",
+  },
 ];
 
 const Index = () => {
