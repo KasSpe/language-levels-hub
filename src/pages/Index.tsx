@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import PhaseCell from "@/components/PhaseCell";
 
 interface GrammarItem {
   name: string;
@@ -89,9 +90,9 @@ const Index = () => {
                 )}
                 {goal.name}
               </div>
-              <div className="p-4 border-r border-border">&nbsp;</div>
-              <div className="p-4 border-r border-border">&nbsp;</div>
-              <div className="p-4">&nbsp;</div>
+              <div className="p-4 border-r border-border"><PhaseCell /></div>
+              <div className="p-4 border-r border-border"><PhaseCell /></div>
+              <div className="p-4"><PhaseCell /></div>
             </div>
 
             {/* Children */}
@@ -104,9 +105,9 @@ const Index = () => {
                   <div className="p-4 pl-10 border-r border-border bg-muted/10 text-muted-foreground">
                     {child}
                   </div>
-                  <div className="p-4 border-r border-border">&nbsp;</div>
-                  <div className="p-4 border-r border-border">&nbsp;</div>
-                  <div className="p-4">&nbsp;</div>
+                  <div className="p-4 border-r border-border"><PhaseCell /></div>
+                  <div className="p-4 border-r border-border"><PhaseCell /></div>
+                  <div className="p-4"><PhaseCell /></div>
                 </div>
               ))}
           </div>
