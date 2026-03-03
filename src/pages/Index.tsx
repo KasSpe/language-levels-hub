@@ -90,9 +90,9 @@ const Index = () => {
                 )}
                 {goal.name}
               </div>
-              <div className="p-4 border-r border-border"><PhaseCell /></div>
-              <div className="p-4 border-r border-border"><PhaseCell /></div>
-              <div className="p-4"><PhaseCell /></div>
+              <div className="p-4 border-r border-border">&nbsp;</div>
+              <div className="p-4 border-r border-border">&nbsp;</div>
+              <div className="p-4">&nbsp;</div>
             </div>
 
             {/* Children */}
