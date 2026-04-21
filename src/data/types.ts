@@ -9,9 +9,15 @@ export interface PhaseContent {
   progress?: number; // optioneel voor leerlingvolgsysteem
 }
 
+export interface LevelPhases {
+  fase1?: PhaseContent;
+  fase2?: PhaseContent;
+  fase3?: PhaseContent;
+}
+
 export interface GoalPhaseMap {
-  [level: string]: {
-    [phase: string]: PhaseContent;
+  [goalId: string]: {
+    [level: string]: LevelPhases;
   };
 }
 
