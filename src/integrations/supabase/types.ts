@@ -14,16 +14,153 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      domains: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      goals: {
+        Row: {
+          created_at: string
+          domain_id: string
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          domain_id: string
+          id: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          domain_id?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "domains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      phase_content: {
+        Row: {
+          bullets: Json
+          created_at: string
+          examples: Json
+          goal_id: string
+          id: string
+          level: Database["public"]["Enums"]["level_key"]
+          phase: Database["public"]["Enums"]["phase_key"]
+          title: string | null
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          bullets?: Json
+          created_at?: string
+          examples?: Json
+          goal_id: string
+          id?: string
+          level: Database["public"]["Enums"]["level_key"]
+          phase: Database["public"]["Enums"]["phase_key"]
+          title?: string | null
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          bullets?: Json
+          created_at?: string
+          examples?: Json
+          goal_id?: string
+          id?: string
+          level?: Database["public"]["Enums"]["level_key"]
+          phase?: Database["public"]["Enums"]["phase_key"]
+          title?: string | null
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phase_content_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      level_key: "A1" | "A2" | "B1"
+      phase_key: "fase1" | "fase2" | "fase3"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +287,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      level_key: ["A1", "A2", "B1"],
+      phase_key: ["fase1", "fase2", "fase3"],
+    },
   },
 } as const
