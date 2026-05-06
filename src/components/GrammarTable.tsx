@@ -21,18 +21,20 @@ const PhaseList = ({
   level,
   phasesMap,
   editable,
+  horizontal = false,
 }: {
   goalId: string;
   goalName: string;
   level: LevelKey;
   phasesMap: Map<string, PhaseContentRow>;
   editable: boolean;
+  horizontal?: boolean;
 }) => {
   const [editing, setEditing] = useState<PhaseKey | null>(null);
   const current = editing ? phasesMap.get(`${goalId}|${level}|${editing}`) : undefined;
 
   return (
-    <div className="grid grid-cols-3 gap-3 text-sm">
+    <div className={horizontal ? "grid grid-cols-3 gap-3 text-sm" : "flex flex-col gap-2 text-sm"}>
       {phases.map((p) => {
         const row = phasesMap.get(`${goalId}|${level}|${p.key}`);
         const hasContent = row && (row.title || row.bullets.length > 0);
