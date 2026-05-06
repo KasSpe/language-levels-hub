@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Pencil } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ChevronDown, ChevronRight, Pencil, ExternalLink } from "lucide-react";
 import { useGrammarData, type LevelKey, type PhaseKey, type PhaseContentRow } from "@/hooks/useGrammarData";
 import PhaseEditDialog from "./PhaseEditDialog";
 
@@ -210,14 +211,26 @@ const GrammarTable = ({ editable = false }: Props) => {
                           Inhoud
                         </div>
                         {isZoomed ? (
-                          <div className="p-4">
+                          <div className="p-4 space-y-3">
                             <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} horizontal />
+                            <Link
+                              to={`/doel/${goal.id}/${activeColumn}`}
+                              className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                            >
+                              Meer uitleg <ExternalLink className="h-3.5 w-3.5" />
+                            </Link>
                           </div>
                         ) : (
                           <>
                             {columns.map((lvl, i) => (
-                              <div key={lvl} className={`p-4 ${i < 2 ? "border-r border-border" : ""}`}>
+                              <div key={lvl} className={`p-4 space-y-3 ${i < 2 ? "border-r border-border" : ""}`}>
                                 <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
+                                <Link
+                                  to={`/doel/${goal.id}/${lvl}`}
+                                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                                >
+                                  Meer uitleg <ExternalLink className="h-3 w-3" />
+                                </Link>
                               </div>
                             ))}
                           </>
