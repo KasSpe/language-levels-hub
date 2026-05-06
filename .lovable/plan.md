@@ -1,72 +1,37 @@
+# Overzichtelijke drill-down per doel
 
+Doel: vanuit een compact overzicht kunnen gebruikers in één klik doorklikken naar de details van een grammaticaal doel (lidwoord, znw, …) en daar de inhoud voor A1, A2 en B1 uitgebreid lezen.
 
-# Inhoud van de tabel beheren (alleen voor jou)
+## Gedrag
 
-Je wil de inhoud van de grammaticatabel (fases, bullets, voorbeelden per doel × niveau) makkelijk kunnen wijzigen, zonder dat bezoekers van de site dit kunnen. Hieronder de aanbevolen aanpak en twee alternatieven.
+**Standaardweergave (overzicht):**
+- Domeinen (Naamwoorden, Voornaamwoorden, …) zijn ingeklapt — alleen de domeinnaam zichtbaar.
+- Klik op een domein → de doelen eronder verschijnen, één per rij, met enkel hun naam (geen fase-inhoud, geen A1/A2/B1-vulling). Dit houdt het overzicht rustig.
+- De kolomkoppen "Grammaticaal doel / A1 / A2 / B1" blijven staan ter oriëntatie, maar de doelrijen tonen nog geen inhoud.
 
-## Aanbevolen aanpak: Lovable Cloud + admin-login
+**Doorklikken op een doel:**
+- Klik op een doelnaam → die ene doelrij klapt open en toont in drie nette kolommen (A1, A2, B1) de fases en bullets uitgebreid.
+- Andere doelen in hetzelfde domein blijven ingeklapt (alleen naam zichtbaar), zodat de aandacht bij het gekozen doel ligt.
+- Meerdere doelen tegelijk openklappen mag — elk doel werkt onafhankelijk.
+- Nogmaals klikken op de doelnaam → klapt weer dicht.
 
-We slaan de inhoud op in een database (Lovable Cloud / Supabase) en bouwen een afgeschermd admin-paneel. Bezoekers zien de tabel alleen-lezen; jij logt in en kan alles bewerken via een formulier.
+**Bestaande zoom op kolom blijft werken:**
+- Klikken op A1, A2 of B1 in de header zoomt nog steeds in op die ene CEFR-kolom. In zoom-modus toont een opengeklapt doel uiteraard alleen die kolom (zoals nu).
 
-### Wat de gebruiker krijgt te zien
+**Visuele indicatoren:**
+- Chevron-icoon (▶ / ▼) vóór elke domeinnaam én vóór elke doelnaam, zodat duidelijk is dat ze klikbaar zijn.
+- Lichte hover-achtergrond op klikbare rijen.
+- Opengeklapte doelrij krijgt een subtiel andere achtergrond zodat hij opvalt tegenover de ingeklapte buren.
 
-- **Publiek (`/`)**: de bestaande tabel, exact zoals nu, maar met inhoud die uit de database komt.
-- **Admin (`/admin`)**: zelfde tabel-structuur, maar elke fase-cel is klikbaar → opent een bewerkformulier (titel, bullets, voorbeelden, gewicht). Opslaan = direct zichtbaar op de publieke pagina.
-- **Login (`/auth`)**: e-mail + wachtwoord. Alleen jouw account heeft de `admin`-rol; anderen die per ongeluk de pagina bezoeken zien "geen toegang".
+## Adminmodus
+Hetzelfde gedrag in `/admin`. Het potlood-icoon om te bewerken verschijnt pas wanneer een doel opengeklapt is (anders is er toch geen inhoud zichtbaar om te bewerken).
 
-### Stappen
+## Technisch
 
-1. **Lovable Cloud activeren** (database + auth in één klik, geen extern account nodig).
-2. **Database opzetten**:
-   - `domains`, `goals` (zoals nu in `src/data/`, maar in tabellen).
-   - `phase_content` (één rij per doel × niveau × fase, met titel, bullets als JSON-array, voorbeelden, gewicht).
-   - `user_roles` (aparte tabel met enum `app_role`, volgens de veilige Lovable-conventie — rollen NOOIT op profiel-tabel).
-3. **Seed-script**: huidige inhoud van `src/data/phases.ts` éénmalig naar de database migreren, zodat je niet opnieuw moet beginnen.
-4. **Row-Level Security (RLS)**:
-   - Iedereen mag `select` op `domains`, `goals`, `phase_content` (publieke leestabel).
-   - Alleen `admin` mag `insert / update / delete` (via `has_role(auth.uid(), 'admin')` security-definer functie).
-5. **Publieke pagina (`/`)**: huidige `Index.tsx` aanpassen om data via React Query uit de database te halen i.p.v. statische imports.
-6. **Auth-pagina (`/auth`)**: e-mail/wachtwoord login + signup (signup kan je daarna uitschakelen of beperken).
-7. **Admin-pagina (`/admin`)**:
-   - Beschermd via een `<ProtectedRoute>` die controleert of de ingelogde gebruiker de `admin`-rol heeft.
-   - Zelfde tabel-weergave, maar elke fase-cel opent een dialog met formulier (titel, bullets, voorbeelden, gewicht).
-   - Opslaan via mutation → tabel ververst automatisch.
-8. **Jouw admin-account aanmaken**: na eerste signup geef ik jou de `admin`-rol via de database.
-
-### Voordelen
-
-- Wijzigingen zijn direct live, zonder code te bewerken.
-- Bezoekers kunnen niets wijzigen (RLS dwingt dit af op database-niveau, niet alleen in de UI).
-- Schaalt mee als je later extra velden of niveaus wil toevoegen.
-- Werkt vanaf elk toestel (laptop, tablet) zolang je inlogt.
-
-### Technische details
-
-- Tabellen: `domains(id, name, icon, sort_order)`, `goals(id, domain_id, name, sort_order)`, `phase_content(id, goal_id, level, phase, title, bullets jsonb, examples jsonb, weight, updated_at)`, `user_roles(id, user_id, role app_role)`.
-- Enum `app_role`: `'admin' | 'user'`.
-- Security-definer functie `has_role(_user_id uuid, _role app_role)` voor RLS-policies.
-- Frontend: `@tanstack/react-query` voor data-fetching, bestaande shadcn `Dialog` + `Form` voor het bewerkformulier.
-- Routes: `/` (publiek), `/auth` (login), `/admin` (beschermd, lijst + bewerken).
-
----
-
-## Alternatief 1: Wachtwoord-veld in de UI (lichter, minder veilig)
-
-Eén gedeelde admin-modus die je activeert met een wachtwoord in de URL of een knop. Geen database nodig, inhoud blijft in code-bestanden. **Nadeel**: niet echt veilig (wachtwoord staat in de frontend), en wijzigingen vergen nog steeds een code-deploy. Niet aanbevolen voor jouw use case.
-
-## Alternatief 2: Inhoud blijven beheren in `src/data/phases.ts`
-
-Niets wijzigen, gewoon het bestand zelf aanpassen wanneer nodig. **Nadeel**: vereist dat je telkens via Lovable de code wijzigt, en je hebt nu al een type-fout in dat bestand die eerst opgelost moet worden. Werkt, maar is omslachtig.
-
----
-
-## Bonus: bestaande build-fout oplossen
-
-Er staan momenteel 18 TypeScript-fouten in `src/data/phases.ts` omdat het type `PhaseContent` geen `fase1/fase2/fase3` velden kent. Het type `GoalPhaseMap` verwacht `[level][phase] = PhaseContent`, maar de data nest `PhaseContent` één laag te diep. Ik corrigeer in dezelfde sessie het type (of de data-structuur) zodat de site weer compileert.
-
----
-
-## Wat ik je voorstel
-
-Ga voor de **aanbevolen aanpak** (Lovable Cloud + admin-paneel). Dit is de enige optie die echt voldoet aan "ik kan makkelijk wijzigen, gebruikers niet". Zeg het woord en ik bouw het in deze volgorde: Cloud activeren → tabellen + RLS → seed huidige data → auth + admin-route → bewerkformulier → jouw admin-account toekennen.
-
+- `src/components/GrammarTable.tsx`: state uitbreiden met `openGoals: string[]` naast bestaande `openItems` (domeinen).
+- Domein-rij: bij ingeklapt domein worden geen doelen gerenderd (huidig gedrag al zo).
+- Doel-rij splitsen in twee delen:
+  - **Header-rij van het doel** (altijd zichtbaar wanneer domein open is): doelnaam + chevron, vier kolommen breed maar alleen de eerste kolom is gevuld; klikbaar om te togglen in `openGoals`.
+  - **Inhoud-rij** (alleen zichtbaar als doel-id in `openGoals` zit): de huidige `PhaseList` per niveau (A1/A2/B1), of in zoom-modus alleen het actieve niveau.
+- Bij klikken op een kolomheader (zoom) niet langer automatisch alle domeinen openklappen; gebruiker bepaalt zelf wat hij opent.
+- Geen wijzigingen aan database, hooks of types nodig.

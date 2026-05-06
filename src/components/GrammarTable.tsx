@@ -58,7 +58,10 @@ const PhaseList = ({
               {editable && (
                 <button
                   className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-muted transition-opacity"
-                  onClick={() => setEditing(p.key)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditing(p.key);
+                  }}
                   aria-label="Bewerken"
                 >
                   <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
@@ -85,7 +88,8 @@ const PhaseList = ({
 
 const GrammarTable = ({ editable = false }: Props) => {
   const { data, isLoading, error } = useGrammarData();
-  const [openItems, setOpenItems] = useState<string[]>([]);
+  const [openDomains, setOpenDomains] = useState<string[]>([]);
+  const [openGoals, setOpenGoals] = useState<string[]>([]);
   const [activeColumn, setActiveColumn] = useState<ActiveColumn>(null);
 
   if (isLoading) return <div className="text-muted-foreground">Laden…</div>;
@@ -94,19 +98,19 @@ const GrammarTable = ({ editable = false }: Props) => {
 
   const { domains, goals, phases: phasesMap } = data;
 
-  const toggleItem = (id: string) => {
-    setOpenItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+  const toggleDomain = (id: string) => {
+    setOpenDomains((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+  };
+  const toggleGoal = (id: string) => {
+    setOpenGoals((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
   const handleColumnClick = (col: ActiveColumn) => {
     setActiveColumn((prev) => (prev === col ? null : col));
-    if (activeColumn !== col) {
-      setOpenItems(domains.map((d) => d.id));
-    }
   };
 
   const isZoomed = activeColumn !== null;
-  const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1fr_1fr_1fr_1fr]");
+  const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1.5fr_1fr_1fr_1fr]");
 
   return (
     <div className="border border-border rounded-lg overflow-hidden">
@@ -140,17 +144,17 @@ const GrammarTable = ({ editable = false }: Props) => {
       {/* Rows */}
       {domains.map((domain) => {
         const domainGoals = goals.filter((g) => g.domain_id === domain.id);
-        const open = openItems.includes(domain.id);
+        const domainOpen = openDomains.includes(domain.id);
         return (
           <div key={domain.id}>
             {/* Domain row */}
             <div
               className={`grid ${getGridCols()} gap-0 border-t border-border cursor-pointer hover:bg-muted/50`}
-              onClick={() => toggleItem(domain.id)}
+              onClick={() => toggleDomain(domain.id)}
             >
               <div className="p-4 border-r border-border bg-muted/30 font-medium flex items-center gap-2">
                 {domainGoals.length > 0 ? (
-                  open ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  domainOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 ) : null}
                 {domain.name}
               </div>
@@ -166,27 +170,61 @@ const GrammarTable = ({ editable = false }: Props) => {
             </div>
 
             {/* Goal rows */}
-            {open &&
-              domainGoals.map((goal) => (
-                <div key={goal.id} className={`grid ${getGridCols()} gap-0 border-t border-border`}>
-                  <div className="p-4 pl-10 border-r border-border bg-muted/10 text-muted-foreground">
-                    {goal.name}
-                  </div>
-                  {isZoomed ? (
-                    <div className="p-4">
-                      <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} />
+            {domainOpen &&
+              domainGoals.map((goal) => {
+                const goalOpen = openGoals.includes(goal.id);
+                return (
+                  <div key={goal.id}>
+                    {/* Goal header row (always visible when domain open) */}
+                    <div
+                      className={`grid ${getGridCols()} gap-0 border-t border-border cursor-pointer hover:bg-muted/30 ${
+                        goalOpen ? "bg-accent/30" : ""
+                      }`}
+                      onClick={() => toggleGoal(goal.id)}
+                    >
+                      <div className="p-3 pl-10 border-r border-border text-foreground flex items-center gap-2">
+                        {goalOpen ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        {goal.name}
+                      </div>
+                      {isZoomed ? (
+                        <div className="p-3">&nbsp;</div>
+                      ) : (
+                        <>
+                          <div className="p-3 border-r border-border">&nbsp;</div>
+                          <div className="p-3 border-r border-border">&nbsp;</div>
+                          <div className="p-3">&nbsp;</div>
+                        </>
+                      )}
                     </div>
-                  ) : (
-                    <>
-                      {columns.map((lvl, i) => (
-                        <div key={lvl} className={`p-4 ${i < 2 ? "border-r border-border" : ""}`}>
-                          <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
+
+                    {/* Goal content row (only when open) */}
+                    {goalOpen && (
+                      <div className={`grid ${getGridCols()} gap-0 border-t border-border bg-accent/10`}>
+                        <div className="p-4 pl-10 border-r border-border text-xs uppercase tracking-wide text-muted-foreground">
+                          Inhoud
                         </div>
-                      ))}
-                    </>
-                  )}
-                </div>
-              ))}
+                        {isZoomed ? (
+                          <div className="p-4">
+                            <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} />
+                          </div>
+                        ) : (
+                          <>
+                            {columns.map((lvl, i) => (
+                              <div key={lvl} className={`p-4 ${i < 2 ? "border-r border-border" : ""}`}>
+                                <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
+                              </div>
+                            ))}
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         );
       })}
