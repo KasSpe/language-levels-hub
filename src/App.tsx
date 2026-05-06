@@ -23,6 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/doel/:goalId/:level" element={<GoalLevelDetail />} />
             <Route
               path="/admin"
               element={
