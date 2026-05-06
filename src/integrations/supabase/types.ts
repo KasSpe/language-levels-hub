@@ -41,6 +41,39 @@ export type Database = {
         }
         Relationships: []
       }
+      goal_level_detail: {
+        Row: {
+          created_at: string
+          examples: Json
+          exercises: Json
+          explanation: string | null
+          goal_id: string
+          id: string
+          level: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          examples?: Json
+          exercises?: Json
+          explanation?: string | null
+          goal_id: string
+          id?: string
+          level: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          examples?: Json
+          exercises?: Json
+          explanation?: string | null
+          goal_id?: string
+          id?: string
+          level?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           created_at: string
