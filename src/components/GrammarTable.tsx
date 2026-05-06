@@ -32,7 +32,7 @@ const PhaseList = ({
   const current = editing ? phasesMap.get(`${goalId}|${level}|${editing}`) : undefined;
 
   return (
-    <div className="flex flex-col gap-2 text-sm">
+    <div className="grid grid-cols-3 gap-3 text-sm">
       {phases.map((p) => {
         const row = phasesMap.get(`${goalId}|${level}|${p.key}`);
         const hasContent = row && (row.title || row.bullets.length > 0);
