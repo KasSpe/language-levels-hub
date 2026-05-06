@@ -211,7 +211,7 @@ const GrammarTable = ({ editable = false }: Props) => {
                         </div>
                         {isZoomed ? (
                           <div className="p-4">
-                            <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} />
+                            <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} horizontal />
                           </div>
                         ) : (
                           <>
