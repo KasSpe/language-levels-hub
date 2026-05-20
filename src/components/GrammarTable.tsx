@@ -273,6 +273,7 @@ const GrammarTable = ({ editable = false }: Props) => {
           </div>
         );
       })}
+      </div>
     </div>
   );
 };
