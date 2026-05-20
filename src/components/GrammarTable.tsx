@@ -115,8 +115,38 @@ const GrammarTable = ({ editable = false }: Props) => {
   const isZoomed = activeColumn !== null;
   const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1.5fr_1fr_1fr_1fr]");
 
+  const allOpen =
+    openDomains.length === domains.length && openGoals.length === goals.length;
+
+  const toggleAll = () => {
+    if (allOpen) {
+      setOpenDomains([]);
+      setOpenGoals([]);
+    } else {
+      setOpenDomains(domains.map((d) => d.id));
+      setOpenGoals(goals.map((g) => g.id));
+    }
+  };
+
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
+    <div className="space-y-3">
+      <div className="flex justify-end">
+        <button
+          onClick={toggleAll}
+          className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-md border border-border hover:bg-muted transition-colors"
+        >
+          {allOpen ? (
+            <>
+              <ChevronDown className="h-4 w-4" /> Alles dichtklappen
+            </>
+          ) : (
+            <>
+              <ChevronRight className="h-4 w-4" /> Alles openklappen
+            </>
+          )}
+        </button>
+      </div>
+      <div className="border border-border rounded-lg overflow-hidden">
       {/* Header */}
       <div className={`grid ${getGridCols()} gap-0 transition-all`}>
         <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20">
@@ -243,6 +273,7 @@ const GrammarTable = ({ editable = false }: Props) => {
           </div>
         );
       })}
+      </div>
     </div>
   );
 };
