@@ -109,7 +109,9 @@ const PhaseOrder = () => {
         if (!hasContent) return;
         result.push({
           id: `${g.id}|${p}`,
+          goalId: g.id,
           goalName: goalsById.get(g.id)?.name ?? g.id,
+          phase: p,
           phaseLabel: phaseLabels[p],
           title: row.title,
           bullets: row.bullets,
