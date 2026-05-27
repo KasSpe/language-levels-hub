@@ -28,7 +28,9 @@ const phaseLabels: Record<PhaseKey, string> = {
 
 interface Item {
   id: string;
+  goalId: string;
   goalName: string;
+  phase: PhaseKey;
   phaseLabel: string;
   title: string | null;
   bullets: string[];
@@ -36,7 +38,13 @@ interface Item {
 
 const storageKey = (level: LevelKey) => `phase-order:${level}`;
 
-const SortableRow = ({ item }: { item: Item }) => {
+const phaseClasses: Record<PhaseKey, string> = {
+  fase1: "bg-green-100 border-green-300",
+  fase2: "bg-green-300 border-green-500",
+  fase3: "bg-green-600 border-green-800 text-white",
+};
+
+const SortableRow = ({ item, invalid }: { item: Item; invalid: boolean }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: item.id });
   const style = {
@@ -44,29 +52,36 @@ const SortableRow = ({ item }: { item: Item }) => {
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
+  const base = invalid
+    ? "bg-red-100 border-red-500 text-red-900"
+    : phaseClasses[item.phase];
+  const mutedText = item.phase === "fase3" && !invalid ? "text-white/80" : "text-muted-foreground";
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-start gap-3 p-3 bg-card border border-border rounded-md"
+      className={`flex items-start gap-3 p-3 border-2 rounded-md ${base}`}
     >
       <button
         {...attributes}
         {...listeners}
-        className="mt-0.5 p-1 rounded hover:bg-muted cursor-grab active:cursor-grabbing"
+        className="mt-0.5 p-1 rounded hover:bg-black/10 cursor-grab active:cursor-grabbing"
         aria-label="Sleep"
       >
-        <GripVertical className="h-4 w-4 text-muted-foreground" />
+        <GripVertical className="h-4 w-4" />
       </button>
       <div className="flex-1 text-sm">
-        <div className="font-medium text-foreground">
-          {item.goalName} <span className="text-muted-foreground">— {item.phaseLabel}</span>
+        <div className="font-medium">
+          {item.goalName} <span className={mutedText}>— {item.phaseLabel}</span>
+          {invalid && (
+            <span className="ml-2 text-xs font-semibold uppercase">Ongeldige volgorde</span>
+          )}
         </div>
         {item.title && item.title !== "—" && (
-          <div className="text-muted-foreground italic">{item.title}</div>
+          <div className={`italic ${mutedText}`}>{item.title}</div>
         )}
         {item.bullets.length > 0 && (
-          <ul className="list-disc pl-5 text-muted-foreground mt-1">
+          <ul className={`list-disc pl-5 mt-1 ${mutedText}`}>
             {item.bullets.map((b, i) => (
               <li key={i}>{b}</li>
             ))}
@@ -94,7 +109,9 @@ const PhaseOrder = () => {
         if (!hasContent) return;
         result.push({
           id: `${g.id}|${p}`,
+          goalId: g.id,
           goalName: goalsById.get(g.id)?.name ?? g.id,
+          phase: p,
           phaseLabel: phaseLabels[p],
           title: row.title,
           bullets: row.bullets,
@@ -130,6 +147,19 @@ const PhaseOrder = () => {
     const byId = new Map(items.map((i) => [i.id, i]));
     return order.map((id) => byId.get(id)).filter((x): x is Item => !!x);
   }, [order, items]);
+
+  const invalidIds = useMemo(() => {
+    const seen: Record<string, Set<PhaseKey>> = {};
+    const bad = new Set<string>();
+    orderedItems.forEach((it) => {
+      const prior = seen[it.goalId] ?? new Set<PhaseKey>();
+      if (it.phase === "fase2" && !prior.has("fase1")) bad.add(it.id);
+      if (it.phase === "fase3" && (!prior.has("fase1") || !prior.has("fase2"))) bad.add(it.id);
+      prior.add(it.phase);
+      seen[it.goalId] = prior;
+    });
+    return bad;
+  }, [orderedItems]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
@@ -189,7 +219,7 @@ const PhaseOrder = () => {
         <SortableContext items={orderedItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col gap-2 max-w-3xl">
             {orderedItems.map((item) => (
-              <SortableRow key={item.id} item={item} />
+              <SortableRow key={item.id} item={item} invalid={invalidIds.has(item.id)} />
             ))}
           </div>
         </SortableContext>
