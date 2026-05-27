@@ -25,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/doel/:goalId/:level" element={<GoalLevelDetail />} />
+            <Route path="/volgorde" element={<PhaseOrder />} />
             <Route
               path="/admin"
               element={
