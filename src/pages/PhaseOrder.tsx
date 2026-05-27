@@ -148,6 +148,19 @@ const PhaseOrder = () => {
     return order.map((id) => byId.get(id)).filter((x): x is Item => !!x);
   }, [order, items]);
 
+  const invalidIds = useMemo(() => {
+    const seen: Record<string, Set<PhaseKey>> = {};
+    const bad = new Set<string>();
+    orderedItems.forEach((it) => {
+      const prior = seen[it.goalId] ?? new Set<PhaseKey>();
+      if (it.phase === "fase2" && !prior.has("fase1")) bad.add(it.id);
+      if (it.phase === "fase3" && (!prior.has("fase1") || !prior.has("fase2"))) bad.add(it.id);
+      prior.add(it.phase);
+      seen[it.goalId] = prior;
+    });
+    return bad;
+  }, [orderedItems]);
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
   const handleDragEnd = (e: DragEndEvent) => {
