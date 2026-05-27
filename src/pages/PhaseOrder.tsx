@@ -149,14 +149,15 @@ const PhaseOrder = () => {
   }, [order, items]);
 
   const invalidIds = useMemo(() => {
-    const seen: Record<string, Set<PhaseKey>> = {};
     const bad = new Set<string>();
-    orderedItems.forEach((it) => {
-      const prior = seen[it.goalId] ?? new Set<PhaseKey>();
-      if (it.phase === "fase2" && !prior.has("fase1")) bad.add(it.id);
-      if (it.phase === "fase3" && (!prior.has("fase1") || !prior.has("fase2"))) bad.add(it.id);
-      prior.add(it.phase);
-      seen[it.goalId] = prior;
+    orderedItems.forEach((it, idx) => {
+      if (it.phase === "fase1") return;
+      const mustComeBefore: PhaseKey[] =
+        it.phase === "fase2" ? ["fase1"] : ["fase1", "fase2"];
+      const laterViolation = orderedItems
+        .slice(idx + 1)
+        .some((other) => other.goalId === it.goalId && mustComeBefore.includes(other.phase));
+      if (laterViolation) bad.add(it.id);
     });
     return bad;
   }, [orderedItems]);
