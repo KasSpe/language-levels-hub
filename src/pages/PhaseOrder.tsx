@@ -219,7 +219,7 @@ const PhaseOrder = () => {
         <SortableContext items={orderedItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col gap-2 max-w-3xl">
             {orderedItems.map((item) => (
-              <SortableRow key={item.id} item={item} />
+              <SortableRow key={item.id} item={item} invalid={invalidIds.has(item.id)} />
             ))}
           </div>
         </SortableContext>
