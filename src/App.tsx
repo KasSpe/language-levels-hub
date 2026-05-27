@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import GoalLevelDetail from "./pages/GoalLevelDetail";
+import PhaseOrder from "./pages/PhaseOrder";
 import { AuthProvider } from "./hooks/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/doel/:goalId/:level" element={<GoalLevelDetail />} />
+            <Route path="/volgorde" element={<PhaseOrder />} />
             <Route
               path="/admin"
               element={
