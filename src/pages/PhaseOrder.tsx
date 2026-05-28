@@ -203,11 +203,52 @@ const PhaseOrder = () => {
             {l}
           </Button>
         ))}
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2">
           <Button variant="ghost" size="sm" onClick={resetOrder}>
             Volgorde herstellen
           </Button>
+          <Button variant="outline" size="sm" onClick={() => window.print()}>
+            Afdrukken
+          </Button>
         </div>
+      </div>
+
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          #print-area, #print-area * { visibility: visible; }
+          #print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 16px; }
+          .no-print { display: none !important; }
+          #print-area .print-item {
+            border: 1px solid #999 !important;
+            background: #fff !important;
+            color: #000 !important;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            page-break-inside: avoid;
+          }
+        }
+      `}</style>
+
+      <div id="print-area" className="hidden print:block">
+        <h2 className="text-xl font-bold mb-4">Fasevolgorde — Niveau {level}</h2>
+        <ol className="list-decimal pl-6">
+          {orderedItems.map((item) => (
+            <li key={item.id} className="print-item mb-2">
+              <div className="font-medium">
+                {item.goalName} — {item.phaseLabel}
+              </div>
+              {item.title && item.title !== "—" && <div className="italic">{item.title}</div>}
+              {item.bullets.length > 0 && (
+                <ul className="list-disc pl-5">
+                  {item.bullets.map((b, i) => (
+                    <li key={i}>{b}</li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ol>
       </div>
 
       {isLoading && <div className="text-muted-foreground">Laden…</div>}
