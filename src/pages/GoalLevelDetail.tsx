@@ -163,6 +163,20 @@ const GoalLevelDetail = () => {
           )}
         </section>
 
+        {/* Relevante contexten */}
+        <ListSection
+          title="Contexten – expliciete grammaticalessen"
+          items={d?.explicit_contexts ?? []}
+          editing={editing}
+          onChange={(items) => setDraft({ ...draft!, explicit_contexts: items })}
+        />
+        <ListSection
+          title="Contexten – impliciet in andere lessen"
+          items={d?.implicit_contexts ?? []}
+          editing={editing}
+          onChange={(items) => setDraft({ ...draft!, implicit_contexts: items })}
+        />
+
         {/* Voorbeelden */}
         <ListSection
           title="Voorbeelden"
