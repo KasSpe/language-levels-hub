@@ -33,7 +33,8 @@ const PhaseList = ({
 
   return (
     <div className={horizontal ? "grid grid-cols-3 gap-3 text-sm" : "flex flex-col gap-2 text-sm"}>
-      {phases.map((p) => {
+      {phaseKeys.map((pk) => {
+        const p = { key: pk, label: getPhaseLabel(pk, level) };
         const row = phasesMap.get(`${goalId}|${level}|${p.key}`);
         const hasContent = row && (row.title || row.bullets.length > 0);
         return (
