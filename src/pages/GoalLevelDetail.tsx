@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { getPhaseLabel } from "@/data/phaseLabels";
 
 type Detail = {
   id?: string;
@@ -17,13 +18,11 @@ type Detail = {
   explanation: string | null;
   examples: string[];
   exercises: string[];
+  explicit_contexts: string[];
+  implicit_contexts: string[];
 };
 
-const phases: { key: PhaseKey; label: string }[] = [
-  { key: "fase1", label: "Fase 1 - Basis leggen" },
-  { key: "fase2", label: "Fase 2 - Basis versterken" },
-  { key: "fase3", label: "Fase 3 - Verdiepen" },
-];
+const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
 const GoalLevelDetail = () => {
   const { goalId, level } = useParams<{ goalId: string; level: LevelKey }>();
@@ -52,6 +51,8 @@ const GoalLevelDetail = () => {
         explanation: data?.explanation ?? "",
         examples: Array.isArray(data?.examples) ? (data!.examples as string[]) : [],
         exercises: Array.isArray(data?.exercises) ? (data!.exercises as string[]) : [],
+        explicit_contexts: Array.isArray((data as any)?.explicit_contexts) ? ((data as any).explicit_contexts as string[]) : [],
+        implicit_contexts: Array.isArray((data as any)?.implicit_contexts) ? ((data as any).implicit_contexts as string[]) : [],
       };
     },
   });
@@ -70,6 +71,8 @@ const GoalLevelDetail = () => {
         explanation: d.explanation,
         examples: d.examples,
         exercises: d.exercises,
+        explicit_contexts: d.explicit_contexts,
+        implicit_contexts: d.implicit_contexts,
       };
       const { error } = await supabase
         .from("goal_level_detail")
@@ -87,8 +90,8 @@ const GoalLevelDetail = () => {
   if (isLoading || !grammar) return <div className="p-8 text-muted-foreground">Laden…</div>;
   if (!goal) return <div className="p-8">Doel niet gevonden. <Link to="/" className="text-primary underline">Terug</Link></div>;
 
-  const phasesForLevel = phases
-    .map((p) => ({ ...p, row: grammar.phases.get(`${goalId}|${level}|${p.key}`) }))
+  const phasesForLevel = phaseKeys
+    .map((key) => ({ key, label: getPhaseLabel(key, level as LevelKey), row: grammar.phases.get(`${goalId}|${level}|${key}`) }))
     .filter((p) => p.row && (p.row.title || p.row.bullets.length > 0));
 
   const d = editing ? draft! : detail!;
@@ -159,6 +162,20 @@ const GoalLevelDetail = () => {
             <div className="text-muted-foreground italic">Nog geen uitleg toegevoegd.</div>
           )}
         </section>
+
+        {/* Relevante contexten */}
+        <ListSection
+          title="Contexten – expliciete grammaticalessen"
+          items={d?.explicit_contexts ?? []}
+          editing={editing}
+          onChange={(items) => setDraft({ ...draft!, explicit_contexts: items })}
+        />
+        <ListSection
+          title="Contexten – impliciet in andere lessen"
+          items={d?.implicit_contexts ?? []}
+          editing={editing}
+          onChange={(items) => setDraft({ ...draft!, implicit_contexts: items })}
+        />
 
         {/* Voorbeelden */}
         <ListSection

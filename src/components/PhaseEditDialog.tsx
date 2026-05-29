@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { PhaseContentRow, LevelKey, PhaseKey } from "@/hooks/useGrammarData";
+import { getPhaseLabel } from "@/data/phaseLabels";
 
 interface Props {
   open: boolean;
@@ -59,7 +60,7 @@ const PhaseEditDialog = ({ open, onOpenChange, goalId, goalName, level, phase, e
     onError: (e: any) => toast.error(e.message),
   });
 
-  const phaseLabel = phase === "fase1" ? "Fase 1 (Basis leggen)" : phase === "fase2" ? "Fase 2 (Basis versterken)" : "Fase 3 (Verdiepen)";
+  const phaseLabel = getPhaseLabel(phase, level);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

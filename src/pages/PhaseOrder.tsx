@@ -18,13 +18,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGrammarData, type LevelKey, type PhaseKey } from "@/hooks/useGrammarData";
-
-const levels: LevelKey[] = ["A1", "A2", "B1"];
-const phaseLabels: Record<PhaseKey, string> = {
-  fase1: "Fase 1 - Basis leggen",
-  fase2: "Fase 2 - Basis versterken",
-  fase3: "Fase 3 - Verdiepen",
-};
+import { getPhaseLabel, levels } from "@/data/phaseLabels";
 
 interface Item {
   id: string;
@@ -112,7 +106,7 @@ const PhaseOrder = () => {
           goalId: g.id,
           goalName: goalsById.get(g.id)?.name ?? g.id,
           phase: p,
-          phaseLabel: phaseLabels[p],
+          phaseLabel: getPhaseLabel(p, level),
           title: row.title,
           bullets: row.bullets,
         });

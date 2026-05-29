@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight, Pencil, ExternalLink } from "lucide-react";
 import { useGrammarData, type LevelKey, type PhaseKey, type PhaseContentRow } from "@/hooks/useGrammarData";
+import { getPhaseLabel, levels as allLevels } from "@/data/phaseLabels";
 import PhaseEditDialog from "./PhaseEditDialog";
 
 interface Props {
@@ -9,12 +10,8 @@ interface Props {
 }
 
 type ActiveColumn = LevelKey | null;
-const columns: LevelKey[] = ["A1", "A2", "B1"];
-const phases: { key: PhaseKey; label: string }[] = [
-  { key: "fase1", label: "Fase 1 - Basis leggen" },
-  { key: "fase2", label: "Fase 2 - Basis versterken" },
-  { key: "fase3", label: "Fase 3 - Verdiepen" },
-];
+const columns: LevelKey[] = allLevels;
+const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
 const PhaseList = ({
   goalId,
@@ -36,7 +33,8 @@ const PhaseList = ({
 
   return (
     <div className={horizontal ? "grid grid-cols-3 gap-3 text-sm" : "flex flex-col gap-2 text-sm"}>
-      {phases.map((p) => {
+      {phaseKeys.map((pk) => {
+        const p = { key: pk, label: getPhaseLabel(pk, level) };
         const row = phasesMap.get(`${goalId}|${level}|${p.key}`);
         const hasContent = row && (row.title || row.bullets.length > 0);
         return (
@@ -113,7 +111,7 @@ const GrammarTable = ({ editable = false }: Props) => {
   };
 
   const isZoomed = activeColumn !== null;
-  const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1.5fr_1fr_1fr_1fr]");
+  const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1.5fr_1fr_1fr_1fr_1fr]");
 
   const allOpen =
     openDomains.length === domains.length && openGoals.length === goals.length;
@@ -164,7 +162,7 @@ const GrammarTable = ({ editable = false }: Props) => {
             <div
               key={col}
               className={`bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80 ${
-                i < 2 ? "border-r border-primary-foreground/20" : ""
+                i < columns.length - 1 ? "border-r border-primary-foreground/20" : ""
               }`}
               onClick={() => handleColumnClick(col)}
             >
@@ -195,9 +193,9 @@ const GrammarTable = ({ editable = false }: Props) => {
                 <div className="p-4">&nbsp;</div>
               ) : (
                 <>
-                  <div className="p-4 border-r border-border">&nbsp;</div>
-                  <div className="p-4 border-r border-border">&nbsp;</div>
-                  <div className="p-4">&nbsp;</div>
+                  {columns.map((c, i) => (
+                    <div key={c} className={`p-4 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>&nbsp;</div>
+                  ))}
                 </>
               )}
             </div>
@@ -227,9 +225,9 @@ const GrammarTable = ({ editable = false }: Props) => {
                         <div className="p-3">&nbsp;</div>
                       ) : (
                         <>
-                          <div className="p-3 border-r border-border">&nbsp;</div>
-                          <div className="p-3 border-r border-border">&nbsp;</div>
-                          <div className="p-3">&nbsp;</div>
+                          {columns.map((c, i) => (
+                            <div key={c} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>&nbsp;</div>
+                          ))}
                         </>
                       )}
                     </div>
@@ -253,7 +251,7 @@ const GrammarTable = ({ editable = false }: Props) => {
                         ) : (
                           <>
                             {columns.map((lvl, i) => (
-                              <div key={lvl} className={`p-4 space-y-3 ${i < 2 ? "border-r border-border" : ""}`}>
+                              <div key={lvl} className={`p-4 space-y-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
                                 <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
                                 <Link
                                   to={`/doel/${goal.id}/${lvl}`}

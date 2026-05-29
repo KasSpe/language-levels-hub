@@ -47,8 +47,10 @@ export type Database = {
           examples: Json
           exercises: Json
           explanation: string | null
+          explicit_contexts: Json
           goal_id: string
           id: string
+          implicit_contexts: Json
           level: string
           updated_at: string
         }
@@ -57,8 +59,10 @@ export type Database = {
           examples?: Json
           exercises?: Json
           explanation?: string | null
+          explicit_contexts?: Json
           goal_id: string
           id?: string
+          implicit_contexts?: Json
           level: string
           updated_at?: string
         }
@@ -67,8 +71,10 @@ export type Database = {
           examples?: Json
           exercises?: Json
           explanation?: string | null
+          explicit_contexts?: Json
           goal_id?: string
           id?: string
+          implicit_contexts?: Json
           level?: string
           updated_at?: string
         }
@@ -192,7 +198,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
-      level_key: "A1" | "A2" | "B1"
+      level_key: "ALFA" | "A1" | "A2" | "B1"
       phase_key: "fase1" | "fase2" | "fase3"
     }
     CompositeTypes: {
@@ -322,7 +328,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
-      level_key: ["A1", "A2", "B1"],
+      level_key: ["ALFA", "A1", "A2", "B1"],
       phase_key: ["fase1", "fase2", "fase3"],
     },
   },
