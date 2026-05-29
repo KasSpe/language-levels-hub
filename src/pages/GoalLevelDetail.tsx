@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { getPhaseLabel } from "@/data/phaseLabels";
 
 type Detail = {
   id?: string;
@@ -17,13 +18,11 @@ type Detail = {
   explanation: string | null;
   examples: string[];
   exercises: string[];
+  explicit_contexts: string[];
+  implicit_contexts: string[];
 };
 
-const phases: { key: PhaseKey; label: string }[] = [
-  { key: "fase1", label: "Fase 1 - Basis leggen" },
-  { key: "fase2", label: "Fase 2 - Basis versterken" },
-  { key: "fase3", label: "Fase 3 - Verdiepen" },
-];
+const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
 const GoalLevelDetail = () => {
   const { goalId, level } = useParams<{ goalId: string; level: LevelKey }>();
