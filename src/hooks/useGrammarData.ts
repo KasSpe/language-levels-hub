@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export type LevelKey = "A1" | "A2" | "B1";
+export type LevelKey = "ALFA" | "A1" | "A2" | "B1";
 export type PhaseKey = "fase1" | "fase2" | "fase3";
 
 export interface DomainRow {
