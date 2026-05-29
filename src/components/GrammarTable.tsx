@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight, Pencil, ExternalLink } from "lucide-react";
 import { useGrammarData, type LevelKey, type PhaseKey, type PhaseContentRow } from "@/hooks/useGrammarData";
+import { getPhaseLabel, levels as allLevels } from "@/data/phaseLabels";
 import PhaseEditDialog from "./PhaseEditDialog";
 
 interface Props {
@@ -9,12 +10,8 @@ interface Props {
 }
 
 type ActiveColumn = LevelKey | null;
-const columns: LevelKey[] = ["A1", "A2", "B1"];
-const phases: { key: PhaseKey; label: string }[] = [
-  { key: "fase1", label: "Fase 1 - Basis leggen" },
-  { key: "fase2", label: "Fase 2 - Basis versterken" },
-  { key: "fase3", label: "Fase 3 - Verdiepen" },
-];
+const columns: LevelKey[] = allLevels;
+const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
 const PhaseList = ({
   goalId,
