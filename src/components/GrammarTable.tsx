@@ -111,7 +111,7 @@ const GrammarTable = ({ editable = false }: Props) => {
   };
 
   const isZoomed = activeColumn !== null;
-  const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1.5fr_1fr_1fr_1fr]");
+  const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1.5fr_1fr_1fr_1fr_1fr]");
 
   const allOpen =
     openDomains.length === domains.length && openGoals.length === goals.length;
@@ -162,7 +162,7 @@ const GrammarTable = ({ editable = false }: Props) => {
             <div
               key={col}
               className={`bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80 ${
-                i < 2 ? "border-r border-primary-foreground/20" : ""
+                i < columns.length - 1 ? "border-r border-primary-foreground/20" : ""
               }`}
               onClick={() => handleColumnClick(col)}
             >
