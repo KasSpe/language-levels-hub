@@ -193,9 +193,9 @@ const GrammarTable = ({ editable = false }: Props) => {
                 <div className="p-4">&nbsp;</div>
               ) : (
                 <>
-                  <div className="p-4 border-r border-border">&nbsp;</div>
-                  <div className="p-4 border-r border-border">&nbsp;</div>
-                  <div className="p-4">&nbsp;</div>
+                  {columns.map((c, i) => (
+                    <div key={c} className={`p-4 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>&nbsp;</div>
+                  ))}
                 </>
               )}
             </div>
@@ -225,9 +225,9 @@ const GrammarTable = ({ editable = false }: Props) => {
                         <div className="p-3">&nbsp;</div>
                       ) : (
                         <>
-                          <div className="p-3 border-r border-border">&nbsp;</div>
-                          <div className="p-3 border-r border-border">&nbsp;</div>
-                          <div className="p-3">&nbsp;</div>
+                          {columns.map((c, i) => (
+                            <div key={c} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>&nbsp;</div>
+                          ))}
                         </>
                       )}
                     </div>
@@ -251,7 +251,7 @@ const GrammarTable = ({ editable = false }: Props) => {
                         ) : (
                           <>
                             {columns.map((lvl, i) => (
-                              <div key={lvl} className={`p-4 space-y-3 ${i < 2 ? "border-r border-border" : ""}`}>
+                              <div key={lvl} className={`p-4 space-y-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
                                 <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
                                 <Link
                                   to={`/doel/${goal.id}/${lvl}`}
