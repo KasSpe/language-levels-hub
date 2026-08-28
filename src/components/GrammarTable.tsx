@@ -207,7 +207,9 @@ const GrammarTable = ({ editable = false }: Props) => {
               ) : (
                 <>
                   {columns.map((c, i) => (
-                    <div key={c} className={`p-4 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>&nbsp;</div>
+                    <div key={c} className={`p-4 text-sm text-muted-foreground italic ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
+                      {domainExamples[domain.name]?.[i] ?? " "}
+                    </div>
                   ))}
                 </>
               )}
