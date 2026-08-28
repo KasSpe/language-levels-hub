@@ -100,6 +100,34 @@ const PhaseList = ({
   );
 };
 
+const GoalLevelPreview = ({
+  goalId,
+  level,
+  phasesMap,
+}: {
+  goalId: string;
+  level: LevelKey;
+  phasesMap: Map<string, PhaseContentRow>;
+}) => {
+  const titles = phaseKeys
+    .map((pk, i) => {
+      const row = phasesMap.get(`${goalId}|${level}|${pk}`);
+      return row?.title && row.title !== "—" ? `F${i + 1} · ${row.title}` : null;
+    })
+    .filter(Boolean) as string[];
+
+  if (titles.length === 0) {
+    return <span className="text-muted-foreground/60">—</span>;
+  }
+  return (
+    <ul className="text-xs text-muted-foreground space-y-0.5">
+      {titles.map((t, i) => (
+        <li key={i} className="leading-snug">{t}</li>
+      ))}
+    </ul>
+  );
+};
+
 const GrammarTable = ({ editable = false }: Props) => {
   const { data, isLoading, error } = useGrammarData();
   const [openDomains, setOpenDomains] = useState<string[]>([]);
