@@ -13,6 +13,19 @@ type ActiveColumn = LevelKey | null;
 const columns: LevelKey[] = allLevels;
 const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
+// Voorbeelden per domein, verspreid over de niveaukolommen (ALFA, A1, A2, B1)
+const domainExamples: Record<string, string[]> = {
+  "Naamwoorden": ["de, het", "tafel, huis", "mooi, groot", "twee, eerste"],
+  "Voornaamwoorden": ["ik, jij", "mijn, jouw", "deze, dat", "wie, wat"],
+  "Taalstructurerende woorden": ["in, op", "met, naar", "en, maar", "omdat, als"],
+  "Werkwoordstijden": ["ik loop", "hij werkt", "wij gaan", "zij wonen"],
+  "Specifieke werkwoordsvormen": ["ik ben", "jij hebt", "er is", "het regent"],
+  "Complexe werkwoordconstructies": ["ik kan", "wil je?", "moeten, mogen", "laten, zullen"],
+  "Zinsstructuren": ["Ik kom.", "Jij woont hier.", "Wij eten nu.", "Hij leest een boek."],
+  "Zinsdelen": ["onderwerp", "werkwoord", "naamwoordgroep", "bijwoord"],
+  "Woordsoorten": ["lidwoord", "naamwoord", "werkwoord", "bijwoord"],
+};
+
 const PhaseList = ({
   goalId,
   goalName,
@@ -84,6 +97,34 @@ const PhaseList = ({
         />
       )}
     </div>
+  );
+};
+
+const GoalLevelPreview = ({
+  goalId,
+  level,
+  phasesMap,
+}: {
+  goalId: string;
+  level: LevelKey;
+  phasesMap: Map<string, PhaseContentRow>;
+}) => {
+  const titles = phaseKeys
+    .map((pk, i) => {
+      const row = phasesMap.get(`${goalId}|${level}|${pk}`);
+      return row?.title && row.title !== "—" ? `F${i + 1} · ${row.title}` : null;
+    })
+    .filter(Boolean) as string[];
+
+  if (titles.length === 0) {
+    return <span className="text-muted-foreground/60">—</span>;
+  }
+  return (
+    <ul className="text-xs text-muted-foreground space-y-0.5">
+      {titles.map((t, i) => (
+        <li key={i} className="leading-snug">{t}</li>
+      ))}
+    </ul>
   );
 };
 
@@ -194,7 +235,9 @@ const GrammarTable = ({ editable = false }: Props) => {
               ) : (
                 <>
                   {columns.map((c, i) => (
-                    <div key={c} className={`p-4 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>&nbsp;</div>
+                    <div key={c} className={`p-4 text-sm text-muted-foreground italic ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
+                      {domainExamples[domain.name]?.[i] ?? " "}
+                    </div>
                   ))}
                 </>
               )}
@@ -222,11 +265,19 @@ const GrammarTable = ({ editable = false }: Props) => {
                         {goal.name}
                       </div>
                       {isZoomed ? (
-                        <div className="p-3">&nbsp;</div>
+                        <div className="p-3">
+                          {!goalOpen && (
+                            <GoalLevelPreview goalId={goal.id} level={activeColumn!} phasesMap={phasesMap} />
+                          )}
+                        </div>
                       ) : (
                         <>
                           {columns.map((c, i) => (
-                            <div key={c} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>&nbsp;</div>
+                            <div key={c} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
+                              {!goalOpen && (
+                                <GoalLevelPreview goalId={goal.id} level={c} phasesMap={phasesMap} />
+                              )}
+                            </div>
                           ))}
                         </>
                       )}
