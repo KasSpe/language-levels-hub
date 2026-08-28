@@ -13,18 +13,15 @@ type ActiveColumn = LevelKey | null;
 const columns: LevelKey[] = allLevels;
 const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
-// Voorbeelden per domein, verspreid over de niveaukolommen (ALFA, A1, A2, B1)
-const domainExamples: Record<string, string[]> = {
-  "Naamwoorden": ["de, het", "tafel, huis", "mooi, groot", "twee, eerste"],
-  "Voornaamwoorden": ["ik, jij", "mijn, jouw", "deze, dat", "wie, wat"],
-  "Taalstructurerende woorden": ["in, op", "met, naar", "en, maar", "omdat, als"],
-  "Werkwoordstijden": ["ik loop", "hij werkt", "wij gaan", "zij wonen"],
-  "Specifieke werkwoordsvormen": ["ik ben", "jij hebt", "er is", "het regent"],
-  "Complexe werkwoordconstructies": ["ik kan", "wil je?", "moeten, mogen", "laten, zullen"],
-  "Zinsstructuren": ["Ik kom.", "Jij woont hier.", "Wij eten nu.", "Hij leest een boek."],
-  "Zinsdelen": ["onderwerp", "werkwoord", "naamwoordgroep", "bijwoord"],
-  "Woordsoorten": ["lidwoord", "naamwoord", "werkwoord", "bijwoord"],
+// Verdeelt de doelen van een domein gelijkmatig over de niveaukolommen
+const splitIntoColumns = <T,>(items: T[], parts: number): T[][] => {
+  const result: T[][] = Array.from({ length: parts }, () => []);
+  items.forEach((item, i) => {
+    result[i % parts].push(item);
+  });
+  return result;
 };
+
 
 const PhaseList = ({
   goalId,
@@ -231,12 +228,22 @@ const GrammarTable = ({ editable = false }: Props) => {
                 {domain.name}
               </div>
               {isZoomed ? (
-                <div className="p-4">&nbsp;</div>
+                <div className="p-4 text-sm text-muted-foreground">
+                  {domainGoals.map((g) => g.name).join(" · ")}
+                </div>
               ) : (
                 <>
-                  {columns.map((c, i) => (
-                    <div key={c} className={`p-4 text-sm text-muted-foreground italic ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
-                      {domainExamples[domain.name]?.[i] ?? " "}
+                  {splitIntoColumns(domainGoals, columns.length).map((group, i) => (
+                    <div key={columns[i]} className={`p-4 text-sm text-muted-foreground ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
+                      {group.length > 0 ? (
+                        <ul className="space-y-0.5 leading-snug">
+                          {group.map((g) => (
+                            <li key={g.id}>{g.name}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        " "
+                      )}
                     </div>
                   ))}
                 </>
