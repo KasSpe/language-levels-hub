@@ -210,6 +210,14 @@ const GrammarTable = ({ editable = false }: Props) => {
         )}
       </div>
 
+      {/* Overview row with all goal types listed together */}
+      <div className="grid grid-cols-1 gap-0 border-t border-border bg-muted/20 p-4">
+        <div className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">Alle grammaticale doelen: </span>
+          {goals.map((g) => g.name).join(" · ")}
+        </div>
+      </div>
+
       {/* Rows */}
       {domains.map((domain) => {
         const domainGoals = goals.filter((g) => g.domain_id === domain.id);
