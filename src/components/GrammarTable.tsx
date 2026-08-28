@@ -265,11 +265,19 @@ const GrammarTable = ({ editable = false }: Props) => {
                         {goal.name}
                       </div>
                       {isZoomed ? (
-                        <div className="p-3">&nbsp;</div>
+                        <div className="p-3">
+                          {!goalOpen && (
+                            <GoalLevelPreview goalId={goal.id} level={activeColumn!} phasesMap={phasesMap} />
+                          )}
+                        </div>
                       ) : (
                         <>
                           {columns.map((c, i) => (
-                            <div key={c} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>&nbsp;</div>
+                            <div key={c} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
+                              {!goalOpen && (
+                                <GoalLevelPreview goalId={goal.id} level={c} phasesMap={phasesMap} />
+                              )}
+                            </div>
                           ))}
                         </>
                       )}
