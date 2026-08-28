@@ -13,6 +13,19 @@ type ActiveColumn = LevelKey | null;
 const columns: LevelKey[] = allLevels;
 const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
+// Voorbeelden per domein, verspreid over de niveaukolommen (ALFA, A1, A2, B1)
+const domainExamples: Record<string, string[]> = {
+  "Naamwoorden": ["de, het", "tafel, huis", "mooi, groot", "twee, eerste"],
+  "Voornaamwoorden": ["ik, jij", "mijn, jouw", "deze, dat", "wie, wat"],
+  "Taalstructurerende woorden": ["in, op", "met, naar", "en, maar", "omdat, als"],
+  "Werkwoordstijden": ["ik loop", "hij werkt", "wij gaan", "zij wonen"],
+  "Specifieke werkwoordsvormen": ["ik ben", "jij hebt", "er is", "het regent"],
+  "Complexe werkwoordconstructies": ["ik kan", "wil je?", "moeten, mogen", "laten, zullen"],
+  "Zinsstructuren": ["Ik kom.", "Jij woont hier.", "Wij eten nu.", "Hij leest een boek."],
+  "Zinsdelen": ["onderwerp", "werkwoord", "naamwoordgroep", "bijwoord"],
+  "Woordsoorten": ["lidwoord", "naamwoord", "werkwoord", "bijwoord"],
+};
+
 const PhaseList = ({
   goalId,
   goalName,
