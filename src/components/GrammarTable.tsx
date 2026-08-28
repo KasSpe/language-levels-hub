@@ -232,21 +232,13 @@ const GrammarTable = ({ editable = false }: Props) => {
                   {domainGoals.map((g) => g.name).join(" · ")}
                 </div>
               ) : (
-                <>
-                  {splitIntoColumns(domainGoals, columns.length).map((group, i) => (
-                    <div key={columns[i]} className={`p-4 text-sm text-muted-foreground ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
-                      {group.length > 0 ? (
-                        <ul className="space-y-0.5 leading-snug">
-                          {group.map((g) => (
-                            <li key={g.id}>{g.name}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        " "
-                      )}
-                    </div>
-                  ))}
-                </>
+                <div className="col-span-4 p-4 text-sm text-muted-foreground">
+                  {domainGoals.length > 0 ? (
+                    domainGoals.map((g) => g.name).join(" · ")
+                  ) : (
+                    "—"
+                  )}
+                </div>
               )}
             </div>
 
