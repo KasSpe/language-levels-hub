@@ -237,7 +237,13 @@ const GrammarTable = ({ editable = false }: Props) => {
               {/* Goal rows: inhoud meteen zichtbaar, geen open/dichtklap */}
               {domainOpen &&
                 domainGoals.map((goal) => (
-                  <div key={goal.id} className={`grid ${getGridCols()} gap-0 border-t border-border`}>
+                  <div
+                    key={goal.id}
+                    id={`goal-${goal.id}`}
+                    className={`grid ${getGridCols()} gap-0 border-t border-border transition-colors ${
+                      highlightedGoal === goal.id ? "bg-primary/5" : ""
+                    }`}
+                  >
                     <div className="p-3 pl-10 border-r border-border font-medium text-foreground bg-muted/10">
                       {goal.name}
                     </div>
