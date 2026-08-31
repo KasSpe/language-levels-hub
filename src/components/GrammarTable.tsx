@@ -13,14 +13,6 @@ type ActiveColumn = LevelKey | null;
 const columns: LevelKey[] = allLevels;
 const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
-// Verdeelt de doelen van een domein gelijkmatig over de niveaukolommen
-const splitIntoColumns = <T,>(items: T[], parts: number): T[][] => {
-  const result: T[][] = Array.from({ length: parts }, () => []);
-  items.forEach((item, i) => {
-    result[i % parts].push(item);
-  });
-  return result;
-};
 
 
 const PhaseList = ({
