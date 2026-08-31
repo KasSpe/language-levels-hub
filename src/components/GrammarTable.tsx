@@ -195,15 +195,41 @@ const GrammarTable = ({ editable = false }: Props) => {
                 </div>
                 {isZoomed ? (
                   <div className="p-4 text-sm text-muted-foreground">
-                    {domainGoals.map((g) => g.name).join(" · ")}
+                    {domainGoals.length > 0
+                      ? domainGoals.map((g, i) => (
+                          <span key={g.id}>
+                            {i > 0 && " · "}
+                            <button
+                              className="hover:text-primary hover:underline underline-offset-2 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openGoal(domain.id, g.id);
+                              }}
+                            >
+                              {g.name}
+                            </button>
+                          </span>
+                        ))
+                      : "—"}
                   </div>
                 ) : (
                   <div className="col-span-4 p-4 text-sm text-muted-foreground">
-                    {domainGoals.length > 0 ? (
-                      domainGoals.map((g) => g.name).join(" · ")
-                    ) : (
-                      "—"
-                    )}
+                    {domainGoals.length > 0
+                      ? domainGoals.map((g, i) => (
+                          <span key={g.id}>
+                            {i > 0 && " · "}
+                            <button
+                              className="hover:text-primary hover:underline underline-offset-2 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openGoal(domain.id, g.id);
+                              }}
+                            >
+                              {g.name}
+                            </button>
+                          </span>
+                        ))
+                      : "—"}
                   </div>
                 )}
               </div>
