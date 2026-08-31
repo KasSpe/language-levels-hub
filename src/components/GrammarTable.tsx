@@ -13,8 +13,6 @@ type ActiveColumn = LevelKey | null;
 const columns: LevelKey[] = allLevels;
 const phaseKeys: PhaseKey[] = ["fase1", "fase2", "fase3"];
 
-
-
 const PhaseList = ({
   goalId,
   goalName,
@@ -89,34 +87,6 @@ const PhaseList = ({
   );
 };
 
-const GoalLevelPreview = ({
-  goalId,
-  level,
-  phasesMap,
-}: {
-  goalId: string;
-  level: LevelKey;
-  phasesMap: Map<string, PhaseContentRow>;
-}) => {
-  const titles = phaseKeys
-    .map((pk, i) => {
-      const row = phasesMap.get(`${goalId}|${level}|${pk}`);
-      return row?.title && row.title !== "—" ? `F${i + 1} · ${row.title}` : null;
-    })
-    .filter(Boolean) as string[];
-
-  if (titles.length === 0) {
-    return <span className="text-muted-foreground/60">—</span>;
-  }
-  return (
-    <ul className="text-xs text-muted-foreground space-y-0.5">
-      {titles.map((t, i) => (
-        <li key={i} className="leading-snug">{t}</li>
-      ))}
-    </ul>
-  );
-};
-
 const GrammarTable = ({ editable = false }: Props) => {
   const { data, isLoading, error } = useGrammarData();
   const [openDomains, setOpenDomains] = useState<string[]>([]);
@@ -131,9 +101,6 @@ const GrammarTable = ({ editable = false }: Props) => {
   const toggleDomain = (id: string) => {
     setOpenDomains((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
-  const toggleGoal = (id: string) => {
-    setOpenGoals((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
-  };
 
   const handleColumnClick = (col: ActiveColumn) => {
     setActiveColumn((prev) => (prev === col ? null : col));
@@ -142,16 +109,13 @@ const GrammarTable = ({ editable = false }: Props) => {
   const isZoomed = activeColumn !== null;
   const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1.5fr_1fr_1fr_1fr_1fr]");
 
-  const allOpen =
-    openDomains.length === domains.length && openGoals.length === goals.length;
+  const allOpen = openDomains.length === domains.length;
 
   const toggleAll = () => {
     if (allOpen) {
       setOpenDomains([]);
-      setOpenGoals([]);
     } else {
       setOpenDomains(domains.map((d) => d.id));
-      setOpenGoals(goals.map((g) => g.id));
     }
   };
 
@@ -174,70 +138,69 @@ const GrammarTable = ({ editable = false }: Props) => {
         </button>
       </div>
       <div className="border border-border rounded-lg overflow-hidden">
-      {/* Header */}
-      <div className={`grid ${getGridCols()} gap-0 transition-all`}>
-        <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20">
-          Grammaticaal doel
-        </div>
-        {isZoomed ? (
-          <div
-            className="bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80"
-            onClick={() => handleColumnClick(activeColumn)}
-          >
-            {activeColumn} <span className="text-xs opacity-70 ml-2">(klik om terug te gaan)</span>
+        {/* Header */}
+        <div className={`grid ${getGridCols()} gap-0 transition-all`}>
+          <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20">
+            Grammaticaal doel
           </div>
-        ) : (
-          columns.map((col, i) => (
+          {isZoomed ? (
             <div
-              key={col}
-              className={`bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80 ${
-                i < columns.length - 1 ? "border-r border-primary-foreground/20" : ""
-              }`}
-              onClick={() => handleColumnClick(col)}
+              className="bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80"
+              onClick={() => handleColumnClick(activeColumn)}
             >
-              {col}
+              {activeColumn} <span className="text-xs opacity-70 ml-2">(klik om terug te gaan)</span>
             </div>
-          ))
-        )}
-      </div>
-
-      {/* Rows */}
-      {domains.map((domain) => {
-        const domainGoals = goals.filter((g) => g.domain_id === domain.id);
-        const domainOpen = openDomains.includes(domain.id);
-        return (
-          <div key={domain.id}>
-            {/* Domain row */}
-            <div
-              className={`grid ${getGridCols()} gap-0 border-t border-border cursor-pointer hover:bg-muted/50`}
-              onClick={() => toggleDomain(domain.id)}
-            >
-              <div className="p-4 border-r border-border bg-muted/30 font-medium flex items-center gap-2">
-                {domainGoals.length > 0 ? (
-                  domainOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                ) : null}
-                {domain.name}
+          ) : (
+            columns.map((col, i) => (
+              <div
+                key={col}
+                className={`bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80 ${
+                  i < columns.length - 1 ? "border-r border-primary-foreground/20" : ""
+                }`}
+                onClick={() => handleColumnClick(col)}
+              >
+                {col}
               </div>
-              {isZoomed ? (
-                <div className="p-4 text-sm text-muted-foreground">
-                  {domainGoals.map((g) => g.name).join(" · ")}
-                </div>
-              ) : (
-                <div className="col-span-4 p-4 text-sm text-muted-foreground">
-                  {domainGoals.length > 0 ? (
-                    domainGoals.map((g) => g.name).join(" · ")
-                  ) : (
-                    "—"
-                  )}
-                </div>
-              )}
-            </div>
+            ))
+          )}
+        </div>
 
-            {/* Goal rows */}
-            {domainOpen &&
-              domainGoals.map((goal) => (
-                <div key={goal.id}>
-                  <div className={`grid ${getGridCols()} gap-0 border-t border-border`}>
+        {/* Rows */}
+        {domains.map((domain) => {
+          const domainGoals = goals.filter((g) => g.domain_id === domain.id);
+          const domainOpen = openDomains.includes(domain.id);
+          return (
+            <div key={domain.id}>
+              {/* Domain row */}
+              <div
+                className={`grid ${getGridCols()} gap-0 border-t border-border cursor-pointer hover:bg-muted/50`}
+                onClick={() => toggleDomain(domain.id)}
+              >
+                <div className="p-4 border-r border-border bg-muted/30 font-medium flex items-center gap-2">
+                  {domainGoals.length > 0 ? (
+                    domainOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  ) : null}
+                  {domain.name}
+                </div>
+                {isZoomed ? (
+                  <div className="p-4 text-sm text-muted-foreground">
+                    {domainGoals.map((g) => g.name).join(" · ")}
+                  </div>
+                ) : (
+                  <div className="col-span-4 p-4 text-sm text-muted-foreground">
+                    {domainGoals.length > 0 ? (
+                      domainGoals.map((g) => g.name).join(" · ")
+                    ) : (
+                      "—"
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Goal rows: inhoud meteen zichtbaar, geen open/dichtklap */}
+              {domainOpen &&
+                domainGoals.map((goal) => (
+                  <div key={goal.id} className={`grid ${getGridCols()} gap-0 border-t border-border`}>
                     <div className="p-3 pl-10 border-r border-border font-medium text-foreground bg-muted/10">
                       {goal.name}
                     </div>
@@ -267,11 +230,10 @@ const GrammarTable = ({ editable = false }: Props) => {
                       </>
                     )}
                   </div>
-                </div>
-              ))}
-          </div>
-        );
-      })}
+                ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
