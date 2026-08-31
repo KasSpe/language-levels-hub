@@ -91,14 +91,13 @@ const GrammarTable = ({ editable = false }: Props) => {
   const { data, isLoading, error } = useGrammarData();
   const [openDomains, setOpenDomains] = useState<string[]>([]);
   const [activeColumn, setActiveColumn] = useState<ActiveColumn>(null);
+  const [highlightedGoal, setHighlightedGoal] = useState<string | null>(null);
 
   if (isLoading) return <div className="text-muted-foreground">Laden…</div>;
   if (error) return <div className="text-destructive">Fout bij laden van data.</div>;
   if (!data) return null;
 
   const { domains, goals, phases: phasesMap } = data;
-  const [highlightedGoal, setHighlightedGoal] = useState<string | null>(null);
-
   const toggleDomain = (id: string) => {
     setOpenDomains((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
