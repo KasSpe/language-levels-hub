@@ -120,7 +120,6 @@ const GoalLevelPreview = ({
 const GrammarTable = ({ editable = false }: Props) => {
   const { data, isLoading, error } = useGrammarData();
   const [openDomains, setOpenDomains] = useState<string[]>([]);
-  const [openGoals, setOpenGoals] = useState<string[]>([]);
   const [activeColumn, setActiveColumn] = useState<ActiveColumn>(null);
 
   if (isLoading) return <div className="text-muted-foreground">Laden…</div>;
