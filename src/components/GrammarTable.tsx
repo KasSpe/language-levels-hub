@@ -236,80 +236,40 @@ const GrammarTable = ({ editable = false }: Props) => {
 
             {/* Goal rows */}
             {domainOpen &&
-              domainGoals.map((goal) => {
-                const goalOpen = openGoals.includes(goal.id);
-                return (
-                  <div key={goal.id}>
-                    {/* Goal header row (always visible when domain open) */}
-                    <div
-                      className={`grid ${getGridCols()} gap-0 border-t border-border cursor-pointer hover:bg-muted/30 ${
-                        goalOpen ? "bg-accent/30" : ""
-                      }`}
-                      onClick={() => toggleGoal(goal.id)}
-                    >
-                      <div className="p-3 pl-10 border-r border-border text-foreground flex items-center gap-2">
-                        {goalOpen ? (
-                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                        )}
-                        {goal.name}
-                      </div>
-                      {isZoomed ? (
-                        <div className="p-3">
-                          {!goalOpen && (
-                            <GoalLevelPreview goalId={goal.id} level={activeColumn!} phasesMap={phasesMap} />
-                          )}
-                        </div>
-                      ) : (
-                        <>
-                          {columns.map((c, i) => (
-                            <div key={c} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
-                              {!goalOpen && (
-                                <GoalLevelPreview goalId={goal.id} level={c} phasesMap={phasesMap} />
-                              )}
-                            </div>
-                          ))}
-                        </>
-                      )}
+              domainGoals.map((goal) => (
+                <div key={goal.id}>
+                  <div className={`grid ${getGridCols()} gap-0 border-t border-border`}>
+                    <div className="p-3 pl-10 border-r border-border font-medium text-foreground bg-muted/10">
+                      {goal.name}
                     </div>
-
-                    {/* Goal content row (only when open) */}
-                    {goalOpen && (
-                      <div className={`grid ${getGridCols()} gap-0 border-t border-border bg-accent/10`}>
-                        <div className="p-4 pl-10 border-r border-border text-xs uppercase tracking-wide text-muted-foreground">
-                          Inhoud
-                        </div>
-                        {isZoomed ? (
-                          <div className="p-4 space-y-3">
-                            <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} horizontal />
+                    {isZoomed ? (
+                      <div className="p-3 space-y-3">
+                        <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} horizontal />
+                        <Link
+                          to={`/doel/${goal.id}/${activeColumn}`}
+                          className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                        >
+                          Meer uitleg <ExternalLink className="h-3.5 w-3.5" />
+                        </Link>
+                      </div>
+                    ) : (
+                      <>
+                        {columns.map((lvl, i) => (
+                          <div key={lvl} className={`p-3 space-y-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
+                            <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
                             <Link
-                              to={`/doel/${goal.id}/${activeColumn}`}
-                              className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                              to={`/doel/${goal.id}/${lvl}`}
+                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
                             >
-                              Meer uitleg <ExternalLink className="h-3.5 w-3.5" />
+                              Meer uitleg <ExternalLink className="h-3 w-3" />
                             </Link>
                           </div>
-                        ) : (
-                          <>
-                            {columns.map((lvl, i) => (
-                              <div key={lvl} className={`p-4 space-y-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
-                                <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
-                                <Link
-                                  to={`/doel/${goal.id}/${lvl}`}
-                                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-                                >
-                                  Meer uitleg <ExternalLink className="h-3 w-3" />
-                                </Link>
-                              </div>
-                            ))}
-                          </>
-                        )}
-                      </div>
+                        ))}
+                      </>
                     )}
                   </div>
-                );
-              })}
+                </div>
+              ))}
           </div>
         );
       })}
