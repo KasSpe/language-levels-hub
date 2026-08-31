@@ -97,9 +97,20 @@ const GrammarTable = ({ editable = false }: Props) => {
   if (!data) return null;
 
   const { domains, goals, phases: phasesMap } = data;
+  const [highlightedGoal, setHighlightedGoal] = useState<string | null>(null);
 
   const toggleDomain = (id: string) => {
     setOpenDomains((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+  };
+
+  const openGoal = (domainId: string, goalId: string) => {
+    setOpenDomains((prev) => (prev.includes(domainId) ? prev : [...prev, domainId]));
+    setHighlightedGoal(goalId);
+    // Wacht tot de rij gerenderd is, scroll er dan heen
+    setTimeout(() => {
+      document.getElementById(`goal-${goalId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+    setTimeout(() => setHighlightedGoal((prev) => (prev === goalId ? null : prev)), 2000);
   };
 
   const handleColumnClick = (col: ActiveColumn) => {
