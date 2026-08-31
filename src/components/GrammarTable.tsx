@@ -91,15 +91,25 @@ const GrammarTable = ({ editable = false }: Props) => {
   const { data, isLoading, error } = useGrammarData();
   const [openDomains, setOpenDomains] = useState<string[]>([]);
   const [activeColumn, setActiveColumn] = useState<ActiveColumn>(null);
+  const [highlightedGoal, setHighlightedGoal] = useState<string | null>(null);
 
   if (isLoading) return <div className="text-muted-foreground">Laden…</div>;
   if (error) return <div className="text-destructive">Fout bij laden van data.</div>;
   if (!data) return null;
 
   const { domains, goals, phases: phasesMap } = data;
-
   const toggleDomain = (id: string) => {
     setOpenDomains((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+  };
+
+  const openGoal = (domainId: string, goalId: string) => {
+    setOpenDomains((prev) => (prev.includes(domainId) ? prev : [...prev, domainId]));
+    setHighlightedGoal(goalId);
+    // Wacht tot de rij gerenderd is, scroll er dan heen
+    setTimeout(() => {
+      document.getElementById(`goal-${goalId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+    setTimeout(() => setHighlightedGoal((prev) => (prev === goalId ? null : prev)), 2000);
   };
 
   const handleColumnClick = (col: ActiveColumn) => {
@@ -184,15 +194,41 @@ const GrammarTable = ({ editable = false }: Props) => {
                 </div>
                 {isZoomed ? (
                   <div className="p-4 text-sm text-muted-foreground">
-                    {domainGoals.map((g) => g.name).join(" · ")}
+                    {domainGoals.length > 0
+                      ? domainGoals.map((g, i) => (
+                          <span key={g.id}>
+                            {i > 0 && " · "}
+                            <button
+                              className="hover:text-primary hover:underline underline-offset-2 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openGoal(domain.id, g.id);
+                              }}
+                            >
+                              {g.name}
+                            </button>
+                          </span>
+                        ))
+                      : "—"}
                   </div>
                 ) : (
                   <div className="col-span-4 p-4 text-sm text-muted-foreground">
-                    {domainGoals.length > 0 ? (
-                      domainGoals.map((g) => g.name).join(" · ")
-                    ) : (
-                      "—"
-                    )}
+                    {domainGoals.length > 0
+                      ? domainGoals.map((g, i) => (
+                          <span key={g.id}>
+                            {i > 0 && " · "}
+                            <button
+                              className="hover:text-primary hover:underline underline-offset-2 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openGoal(domain.id, g.id);
+                              }}
+                            >
+                              {g.name}
+                            </button>
+                          </span>
+                        ))
+                      : "—"}
                   </div>
                 )}
               </div>
@@ -200,7 +236,13 @@ const GrammarTable = ({ editable = false }: Props) => {
               {/* Goal rows: inhoud meteen zichtbaar, geen open/dichtklap */}
               {domainOpen &&
                 domainGoals.map((goal) => (
-                  <div key={goal.id} className={`grid ${getGridCols()} gap-0 border-t border-border`}>
+                  <div
+                    key={goal.id}
+                    id={`goal-${goal.id}`}
+                    className={`grid ${getGridCols()} gap-0 border-t border-border transition-colors ${
+                      highlightedGoal === goal.id ? "bg-primary/5" : ""
+                    }`}
+                  >
                     <div className="p-3 pl-10 border-r border-border font-medium text-foreground bg-muted/10">
                       {goal.name}
                     </div>
