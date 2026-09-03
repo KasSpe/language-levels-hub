@@ -149,7 +149,7 @@ const GrammarTable = ({ editable = false }: Props) => {
       </div>
       <div className="border border-border rounded-lg overflow-hidden">
         {/* Header */}
-        <div className={`grid ${getGridCols()} gap-0 transition-all`}>
+        <div className={`grid ${getGridCols()} gap-0 transition-all sticky top-0 z-10 shadow-sm`}>
           <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20">
             Grammaticaal doel
           </div>
