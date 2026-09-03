@@ -147,15 +147,15 @@ const GrammarTable = ({ editable = false }: Props) => {
           )}
         </button>
       </div>
-      <div className="border border-border rounded-lg overflow-hidden">
+      <div className="border border-border rounded-lg">
         {/* Header */}
-        <div className={`grid ${getGridCols()} gap-0 transition-all`}>
-          <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20">
+        <div className={`grid ${getGridCols()} gap-0 transition-all sticky top-0 z-10 shadow-sm`}>
+          <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20 rounded-tl-lg">
             Grammaticaal doel
           </div>
           {isZoomed ? (
             <div
-              className="bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80"
+              className="bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80 rounded-tr-lg"
               onClick={() => handleColumnClick(activeColumn)}
             >
               {activeColumn} <span className="text-xs opacity-70 ml-2">(klik om terug te gaan)</span>
@@ -165,7 +165,7 @@ const GrammarTable = ({ editable = false }: Props) => {
               <div
                 key={col}
                 className={`bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80 ${
-                  i < columns.length - 1 ? "border-r border-primary-foreground/20" : ""
+                  i < columns.length - 1 ? "border-r border-primary-foreground/20" : "rounded-tr-lg"
                 }`}
                 onClick={() => handleColumnClick(col)}
               >
