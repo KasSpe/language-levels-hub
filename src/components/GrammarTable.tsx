@@ -155,7 +155,7 @@ const GrammarTable = ({ editable = false }: Props) => {
           </div>
           {isZoomed ? (
             <div
-              className="bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80"
+              className="bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80 rounded-tr-lg"
               onClick={() => handleColumnClick(activeColumn)}
             >
               {activeColumn} <span className="text-xs opacity-70 ml-2">(klik om terug te gaan)</span>
@@ -165,7 +165,7 @@ const GrammarTable = ({ editable = false }: Props) => {
               <div
                 key={col}
                 className={`bg-primary text-primary-foreground font-semibold p-4 text-center cursor-pointer hover:bg-primary/80 ${
-                  i < columns.length - 1 ? "border-r border-primary-foreground/20" : ""
+                  i < columns.length - 1 ? "border-r border-primary-foreground/20" : "rounded-tr-lg"
                 }`}
                 onClick={() => handleColumnClick(col)}
               >
