@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import GoalLevelDetail from "./pages/GoalLevelDetail";
+import GoalDetail from "./pages/GoalDetail";
 import PhaseOrder from "./pages/PhaseOrder";
 import { AuthProvider } from "./hooks/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
