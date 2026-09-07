@@ -196,6 +196,7 @@ const GoalLevelDetail = () => {
           editing={editing}
           onChange={(items) => setDraft({ ...draft!, exercises: items })}
         />
+        </div>
       </div>
     </div>
   );
