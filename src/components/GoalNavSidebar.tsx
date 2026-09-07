@@ -63,7 +63,7 @@ export const GoalNavSidebar = ({ className }: GoalNavSidebarProps) => {
 
   return (
     <aside className={cn("h-fit sticky top-4", className)}>
-      <div className="rounded-lg border border-border bg-muted/20 overflow-hidden">
+      <div className="rounded-lg border border-border bg-muted/20 overflow-hidden min-w-[16rem]">
         <div className="px-4 py-3 bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-between gap-2">
           <span>Grammaticale doelen</span>
           <button
