@@ -74,6 +74,8 @@ const GoalDetail = () => {
 
   const [editingLevel, setEditingLevel] = useState<LevelKey | null>(null);
   const [draft, setDraft] = useState<Detail | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchTokens = useSearchTokens(searchQuery);
 
   const save = useMutation({
     mutationFn: async (d: Detail) => {
