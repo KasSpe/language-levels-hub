@@ -110,7 +110,7 @@ const GoalDetail = () => {
           <p className="text-muted-foreground mt-1">Uitleg, contexten, voorbeelden en oefeningen per niveau.</p>
         </div>
 
-        <nav className="flex flex-wrap gap-2 mb-8">
+        <nav className="sticky top-0 z-10 bg-background flex flex-wrap gap-2 mb-8 py-2 border-b border-border">
           {levels.map((lvl) => (
             <a
               key={lvl}
