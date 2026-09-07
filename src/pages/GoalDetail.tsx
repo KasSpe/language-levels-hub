@@ -110,7 +110,7 @@ const GoalDetail = () => {
           <p className="text-muted-foreground mt-1">Uitleg, contexten, voorbeelden en oefeningen per niveau.</p>
         </div>
 
-        <nav className="flex flex-wrap gap-2 mb-8">
+        <nav className="sticky top-0 z-10 bg-background flex flex-wrap gap-2 mb-8 py-2 border-b border-border">
           {levels.map((lvl) => (
             <a
               key={lvl}
@@ -131,7 +131,7 @@ const GoalDetail = () => {
             .filter((p) => p.row && (p.row.title || p.row.bullets.length > 0));
 
           return (
-            <section key={lvl} id={`niveau-${lvl}`} className="mb-12 scroll-mt-6">
+            <section key={lvl} id={`niveau-${lvl}`} className="mb-12 scroll-mt-24">
               <div className="flex items-center justify-between border-b border-border pb-2 mb-5">
                 <h2 className="text-xl font-bold">
                   <span className="inline-block px-2 py-0.5 rounded bg-primary text-primary-foreground text-sm font-medium mr-2">
