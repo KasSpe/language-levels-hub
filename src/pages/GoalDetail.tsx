@@ -223,6 +223,7 @@ const GoalDetail = () => {
             </section>
           );
         })}
+        </div>
       </div>
     </div>
   );
