@@ -99,17 +99,20 @@ const GoalDetail = () => {
     );
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-3xl mx-auto">
-        <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="h-4 w-4" /> Terug naar overzicht
-        </Link>
+    <div className="min-h-screen bg-background p-4 md:p-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-8">
+        <GoalNavSidebar className="order-2 lg:order-1" />
 
-        <div className="mb-8">
-          <div className="text-sm text-muted-foreground">{domain?.name}</div>
-          <h1 className="text-3xl font-bold text-foreground">{goal.name}</h1>
-          <p className="text-muted-foreground mt-1">Uitleg, contexten, voorbeelden en oefeningen per niveau.</p>
-        </div>
+        <div className="order-1 lg:order-2">
+          <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
+            <ArrowLeft className="h-4 w-4" /> Terug naar overzicht
+          </Link>
+
+          <div className="mb-8">
+            <div className="text-sm text-muted-foreground">{domain?.name}</div>
+            <h1 className="text-3xl font-bold text-foreground">{goal.name}</h1>
+            <p className="text-muted-foreground mt-1">Uitleg, contexten, voorbeelden en oefeningen per niveau.</p>
+          </div>
 
         <nav className="sticky top-0 z-10 bg-background flex flex-wrap gap-2 mb-8 py-2 border-b border-border">
           {levels.map((lvl) => (
