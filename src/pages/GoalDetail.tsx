@@ -111,10 +111,21 @@ const GoalDetail = () => {
             <ArrowLeft className="h-4 w-4" /> Terug naar overzicht
           </Link>
 
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="text-sm text-muted-foreground">{domain?.name}</div>
             <h1 className="text-3xl font-bold text-foreground">{goal.name}</h1>
             <p className="text-muted-foreground mt-1">Uitleg, contexten, voorbeelden en oefeningen per niveau.</p>
+          </div>
+
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Zoek in uitleg, contexten, voorbeelden en oefeningen…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
           </div>
 
         <nav className="sticky top-0 z-10 bg-background flex flex-wrap gap-2 mb-8 py-2 border-b border-border">
