@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Pencil, Save, X, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Plus, Trash2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGrammarData, type LevelKey, type PhaseKey } from "@/hooks/useGrammarData";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { getPhaseLabel, levels } from "@/data/phaseLabels";
 import { GoalNavSidebar } from "@/components/GoalNavSidebar";
+import { HighlightText, matchesTokens, useSearchTokens } from "@/components/SearchHighlight";
 
 type Detail = {
   goal_id: string;
@@ -73,6 +74,8 @@ const GoalDetail = () => {
 
   const [editingLevel, setEditingLevel] = useState<LevelKey | null>(null);
   const [draft, setDraft] = useState<Detail | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchTokens = useSearchTokens(searchQuery);
 
   const save = useMutation({
     mutationFn: async (d: Detail) => {
@@ -108,10 +111,21 @@ const GoalDetail = () => {
             <ArrowLeft className="h-4 w-4" /> Terug naar overzicht
           </Link>
 
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="text-sm text-muted-foreground">{domain?.name}</div>
             <h1 className="text-3xl font-bold text-foreground">{goal.name}</h1>
             <p className="text-muted-foreground mt-1">Uitleg, contexten, voorbeelden en oefeningen per niveau.</p>
+          </div>
+
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Zoek in uitleg, contexten, voorbeelden en oefeningen…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
           </div>
 
         <nav className="sticky top-0 z-10 bg-background flex flex-wrap gap-2 mb-8 py-2 border-b border-border">
