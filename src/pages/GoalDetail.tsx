@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Pencil, Save, X, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Plus, Trash2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGrammarData, type LevelKey, type PhaseKey } from "@/hooks/useGrammarData";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { getPhaseLabel, levels } from "@/data/phaseLabels";
 import { GoalNavSidebar } from "@/components/GoalNavSidebar";
+import { HighlightText, matchesTokens, useSearchTokens } from "@/components/SearchHighlight";
 
 type Detail = {
   goal_id: string;
