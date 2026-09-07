@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { getPhaseLabel, levels } from "@/data/phaseLabels";
+import { GoalNavSidebar } from "@/components/GoalNavSidebar";
 
 type Detail = {
   goal_id: string;
