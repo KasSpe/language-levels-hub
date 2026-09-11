@@ -110,7 +110,7 @@ const GoalLevelDetail = () => {
             <ArrowLeft className="h-4 w-4" /> Terug naar overzicht
           </Link>
 
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-4">
             <div>
               <div className="text-sm text-muted-foreground">{domain?.name}</div>
               <h1 className="text-3xl font-bold text-foreground">{goal.name}</h1>
@@ -131,6 +131,17 @@ const GoalLevelDetail = () => {
               </Button>
             </div>
           )}
+        </div>
+
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Zoek in uitleg, contexten, voorbeelden en oefeningen…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
         </div>
 
         {/* Fases overzicht */}
