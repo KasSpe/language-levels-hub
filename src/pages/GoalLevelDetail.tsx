@@ -61,6 +61,8 @@ const GoalLevelDetail = () => {
 
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<Detail | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchTokens = useSearchTokens(searchQuery);
   useEffect(() => {
     if (detail && !editing) setDraft(detail);
   }, [detail, editing]);
