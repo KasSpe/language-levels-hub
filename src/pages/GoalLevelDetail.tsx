@@ -236,44 +236,58 @@ const ListSection = ({
   title,
   items,
   editing,
+  tokens,
   onChange,
 }: {
   title: string;
   items: string[];
   editing: boolean;
+  tokens?: string[];
   onChange: (items: string[]) => void;
-}) => (
-  <section className="mb-8">
-    <h2 className="font-semibold text-lg mb-2">{title}</h2>
-    {editing ? (
-      <div className="space-y-2">
-        {items.map((it, i) => (
-          <div key={i} className="flex gap-2">
-            <Input
-              value={it}
-              onChange={(e) => {
-                const next = [...items];
-                next[i] = e.target.value;
-                onChange(next);
-              }}
-            />
-            <Button variant="ghost" size="icon" onClick={() => onChange(items.filter((_, idx) => idx !== i))}>
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
-        <Button variant="outline" size="sm" onClick={() => onChange([...items, ""])}>
-          <Plus className="h-4 w-4 mr-1" /> Toevoegen
-        </Button>
-      </div>
-    ) : items.length > 0 ? (
-      <ul className="list-disc pl-5 text-foreground space-y-1">
-        {items.map((it, i) => <li key={i}>{it}</li>)}
-      </ul>
-    ) : (
-      <div className="text-muted-foreground italic">Nog geen {title.toLowerCase()} toegevoegd.</div>
-    )}
-  </section>
-);
+}) => {
+  const visibleItems = tokens && tokens.length > 0 && !editing
+    ? items.filter((it) => matchesTokens(it, tokens))
+    : items;
+
+  return (
+    <section className="mb-8">
+      <h2 className="font-semibold text-lg mb-2">{title}</h2>
+      {editing ? (
+        <div className="space-y-2">
+          {items.map((it, i) => (
+            <div key={i} className="flex gap-2">
+              <Input
+                value={it}
+                onChange={(e) => {
+                  const next = [...items];
+                  next[i] = e.target.value;
+                  onChange(next);
+                }}
+              />
+              <Button variant="ghost" size="icon" onClick={() => onChange(items.filter((_, idx) => idx !== i))}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => onChange([...items, ""])}>
+            <Plus className="h-4 w-4 mr-1" /> Toevoegen
+          </Button>
+        </div>
+      ) : visibleItems.length > 0 ? (
+        <ul className="list-disc pl-5 text-foreground space-y-1">
+          {visibleItems.map((it, i) => (
+            <li key={i}>
+              <HighlightText text={it} tokens={tokens ?? []} />
+            </li>
+          ))}
+        </ul>
+      ) : tokens && tokens.length > 0 ? (
+        <div className="text-muted-foreground italic">Geen overeenkomsten in {title.toLowerCase()}.</div>
+      ) : (
+        <div className="text-muted-foreground italic">Nog geen {title.toLowerCase()} toegevoegd.</div>
+      )}
+    </section>
+  );
+};
 
 export default GoalLevelDetail;
