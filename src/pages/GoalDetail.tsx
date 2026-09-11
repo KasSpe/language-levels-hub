@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { getPhaseLabel, levels } from "@/data/phaseLabels";
 import { GoalNavSidebar } from "@/components/GoalNavSidebar";
 import { HighlightText, matchesTokens, useSearchTokens } from "@/components/SearchHighlight";
+import { SearchSuggestInput } from "@/components/SearchSuggestInput";
+import { useMemo } from "react";
 
 type Detail = {
   goal_id: string;
@@ -76,6 +78,24 @@ const GoalDetail = () => {
   const [draft, setDraft] = useState<Detail | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const searchTokens = useSearchTokens(searchQuery);
+
+  const searchCorpus = useMemo(() => {
+    const texts: string[] = [];
+    if (details) {
+      Object.values(details).forEach((d) => {
+        texts.push(d.explanation, ...d.examples, ...d.exercises, ...d.explicit_contexts, ...d.implicit_contexts);
+      });
+    }
+    if (grammar && goalId) {
+      levels.forEach((lvl) =>
+        phaseKeys.forEach((key) => {
+          const row = grammar.phases.get(`${goalId}|${lvl}|${key}`);
+          if (row) texts.push(row.title, ...row.bullets);
+        })
+      );
+    }
+    return texts;
+  }, [details, grammar, goalId]);
 
   const save = useMutation({
     mutationFn: async (d: Detail) => {
