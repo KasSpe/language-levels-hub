@@ -65,6 +65,27 @@ const GoalLevelDetail = () => {
   const [draft, setDraft] = useState<Detail | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const searchTokens = useSearchTokens(searchQuery);
+
+  const searchCorpus = useMemo(() => {
+    const texts: string[] = [];
+    if (detail) {
+      texts.push(
+        detail.explanation ?? "",
+        ...detail.examples,
+        ...detail.exercises,
+        ...detail.explicit_contexts,
+        ...detail.implicit_contexts
+      );
+    }
+    if (grammar && goalId && level) {
+      phaseKeys.forEach((key) => {
+        const row = grammar.phases.get(`${goalId}|${level}|${key}`);
+        if (row) texts.push(row.title, ...row.bullets);
+      });
+    }
+    return texts;
+  }, [detail, grammar, goalId, level]);
+
   useEffect(() => {
     if (detail && !editing) setDraft(detail);
   }, [detail, editing]);
