@@ -1,7 +1,6 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { escapeRegExp } from "@/components/SearchHighlight";
 
 interface SearchSuggestInputProps {
   value: string;
@@ -71,9 +70,6 @@ export const SearchSuggestInput = ({ value, onChange, corpus, placeholder }: Sea
       </>
     );
   };
-
-  // escapeRegExp imported to keep parity if extended; referenced to avoid lint noise
-  void escapeRegExp;
 
   return (
     <div ref={containerRef} className="relative mb-6">
