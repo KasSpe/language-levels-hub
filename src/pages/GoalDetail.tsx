@@ -179,13 +179,21 @@ const GoalDetail = () => {
                   <div className="space-y-4">
                     {phasesForLevel.map((p) => (
                       <div key={p.key}>
-                        <div className="font-medium">{p.label}</div>
+                        <div className="font-medium">
+                          <HighlightText text={p.label} tokens={searchTokens} />
+                        </div>
                         {p.row?.title && p.row.title !== "—" && (
-                          <div className="italic text-muted-foreground">{p.row.title}</div>
+                          <div className="italic text-muted-foreground">
+                            <HighlightText text={p.row.title} tokens={searchTokens} />
+                          </div>
                         )}
                         {p.row && p.row.bullets.length > 0 && (
                           <ul className="list-disc pl-5 text-sm text-muted-foreground mt-1">
-                            {p.row.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                            {p.row.bullets.map((b, i) => (
+                              <li key={i}>
+                                <HighlightText text={b} tokens={searchTokens} />
+                              </li>
+                            ))}
                           </ul>
                         )}
                       </div>
@@ -204,7 +212,9 @@ const GoalDetail = () => {
                     placeholder="Schrijf hier de uitgebreide uitleg…"
                   />
                 ) : d.explanation ? (
-                  <div className="whitespace-pre-wrap text-foreground leading-relaxed">{d.explanation}</div>
+                  <div className="whitespace-pre-wrap text-foreground leading-relaxed">
+                    <HighlightText text={d.explanation} tokens={searchTokens} />
+                  </div>
                 ) : (
                   <div className="text-muted-foreground italic">Nog geen uitleg toegevoegd.</div>
                 )}
@@ -214,24 +224,28 @@ const GoalDetail = () => {
                 title="Contexten – expliciete grammaticalessen"
                 items={d.explicit_contexts}
                 editing={isEditing}
+                tokens={searchTokens}
                 onChange={(items) => setDraft({ ...draft!, explicit_contexts: items })}
               />
               <ListSection
                 title="Contexten – impliciet in andere lessen"
                 items={d.implicit_contexts}
                 editing={isEditing}
+                tokens={searchTokens}
                 onChange={(items) => setDraft({ ...draft!, implicit_contexts: items })}
               />
               <ListSection
                 title="Voorbeelden"
                 items={d.examples}
                 editing={isEditing}
+                tokens={searchTokens}
                 onChange={(items) => setDraft({ ...draft!, examples: items })}
               />
               <ListSection
                 title="Oefeningen"
                 items={d.exercises}
                 editing={isEditing}
+                tokens={searchTokens}
                 onChange={(items) => setDraft({ ...draft!, exercises: items })}
               />
             </section>
@@ -247,44 +261,58 @@ const ListSection = ({
   title,
   items,
   editing,
+  tokens,
   onChange,
 }: {
   title: string;
   items: string[];
   editing: boolean;
+  tokens?: string[];
   onChange: (items: string[]) => void;
-}) => (
-  <div className="mb-6">
-    <h3 className="font-semibold text-lg mb-2">{title}</h3>
-    {editing ? (
-      <div className="space-y-2">
-        {items.map((it, i) => (
-          <div key={i} className="flex gap-2">
-            <Input
-              value={it}
-              onChange={(e) => {
-                const next = [...items];
-                next[i] = e.target.value;
-                onChange(next);
-              }}
-            />
-            <Button variant="ghost" size="icon" onClick={() => onChange(items.filter((_, idx) => idx !== i))}>
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
-        <Button variant="outline" size="sm" onClick={() => onChange([...items, ""])}>
-          <Plus className="h-4 w-4 mr-1" /> Toevoegen
-        </Button>
-      </div>
-    ) : items.length > 0 ? (
-      <ul className="list-disc pl-5 text-foreground space-y-1">
-        {items.map((it, i) => <li key={i}>{it}</li>)}
-      </ul>
-    ) : (
-      <div className="text-muted-foreground italic">Nog geen {title.toLowerCase()} toegevoegd.</div>
-    )}
-  </div>
-);
+}) => {
+  const visibleItems = tokens && tokens.length > 0 && !editing
+    ? items.filter((it) => matchesTokens(it, tokens))
+    : items;
+
+  return (
+    <div className="mb-6">
+      <h3 className="font-semibold text-lg mb-2">{title}</h3>
+      {editing ? (
+        <div className="space-y-2">
+          {items.map((it, i) => (
+            <div key={i} className="flex gap-2">
+              <Input
+                value={it}
+                onChange={(e) => {
+                  const next = [...items];
+                  next[i] = e.target.value;
+                  onChange(next);
+                }}
+              />
+              <Button variant="ghost" size="icon" onClick={() => onChange(items.filter((_, idx) => idx !== i))}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => onChange([...items, ""])}>
+            <Plus className="h-4 w-4 mr-1" /> Toevoegen
+          </Button>
+        </div>
+      ) : visibleItems.length > 0 ? (
+        <ul className="list-disc pl-5 text-foreground space-y-1">
+          {visibleItems.map((it, i) => (
+            <li key={i}>
+              <HighlightText text={it} tokens={tokens ?? []} />
+            </li>
+          ))}
+        </ul>
+      ) : tokens && tokens.length > 0 ? (
+        <div className="text-muted-foreground italic">Geen overeenkomsten in {title.toLowerCase()}.</div>
+      ) : (
+        <div className="text-muted-foreground italic">Nog geen {title.toLowerCase()} toegevoegd.</div>
+      )}
+    </div>
+  );
+};
 
 export default GoalDetail;
