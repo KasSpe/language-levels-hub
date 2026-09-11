@@ -156,16 +156,7 @@ const GoalLevelDetail = () => {
           )}
         </div>
 
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Zoek in uitleg, contexten, voorbeelden en oefeningen…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+        <SearchSuggestInput value={searchQuery} onChange={setSearchQuery} corpus={searchCorpus} />
 
         {/* Fases overzicht */}
         {phasesForLevel.length > 0 && (
