@@ -151,11 +151,21 @@ const GoalLevelDetail = () => {
             <div className="space-y-4">
               {phasesForLevel.map((p) => (
                 <div key={p.key}>
-                  <div className="font-medium">{p.label}</div>
-                  {p.row?.title && p.row.title !== "—" && <div className="italic text-muted-foreground">{p.row.title}</div>}
+                  <div className="font-medium">
+                    <HighlightText text={p.label} tokens={searchTokens} />
+                  </div>
+                  {p.row?.title && p.row.title !== "—" && (
+                    <div className="italic text-muted-foreground">
+                      <HighlightText text={p.row.title} tokens={searchTokens} />
+                    </div>
+                  )}
                   {p.row && p.row.bullets.length > 0 && (
                     <ul className="list-disc pl-5 text-sm text-muted-foreground mt-1">
-                      {p.row.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                      {p.row.bullets.map((b, i) => (
+                        <li key={i}>
+                          <HighlightText text={b} tokens={searchTokens} />
+                        </li>
+                      ))}
                     </ul>
                   )}
                 </div>
@@ -175,7 +185,9 @@ const GoalLevelDetail = () => {
               placeholder="Schrijf hier de uitgebreide uitleg…"
             />
           ) : d?.explanation ? (
-            <div className="whitespace-pre-wrap text-foreground leading-relaxed">{d.explanation}</div>
+            <div className="whitespace-pre-wrap text-foreground leading-relaxed">
+              <HighlightText text={d.explanation} tokens={searchTokens} />
+            </div>
           ) : (
             <div className="text-muted-foreground italic">Nog geen uitleg toegevoegd.</div>
           )}
