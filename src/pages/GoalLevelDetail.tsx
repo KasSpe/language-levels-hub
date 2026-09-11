@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { ArrowLeft, Pencil, Save, X, Plus, Trash2, Search } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGrammarData, type LevelKey, type PhaseKey } from "@/hooks/useGrammarData";
@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { getPhaseLabel } from "@/data/phaseLabels";
 import { GoalNavSidebar } from "@/components/GoalNavSidebar";
 import { HighlightText, matchesTokens, useSearchTokens } from "@/components/SearchHighlight";
+import { SearchSuggestInput } from "@/components/SearchSuggestInput";
+import { useMemo } from "react";
 
 type Detail = {
   id?: string;
@@ -63,6 +65,27 @@ const GoalLevelDetail = () => {
   const [draft, setDraft] = useState<Detail | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const searchTokens = useSearchTokens(searchQuery);
+
+  const searchCorpus = useMemo(() => {
+    const texts: string[] = [];
+    if (detail) {
+      texts.push(
+        detail.explanation ?? "",
+        ...detail.examples,
+        ...detail.exercises,
+        ...detail.explicit_contexts,
+        ...detail.implicit_contexts
+      );
+    }
+    if (grammar && goalId && level) {
+      phaseKeys.forEach((key) => {
+        const row = grammar.phases.get(`${goalId}|${level}|${key}`);
+        if (row) texts.push(row.title, ...row.bullets);
+      });
+    }
+    return texts;
+  }, [detail, grammar, goalId, level]);
+
   useEffect(() => {
     if (detail && !editing) setDraft(detail);
   }, [detail, editing]);
@@ -133,16 +156,7 @@ const GoalLevelDetail = () => {
           )}
         </div>
 
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Zoek in uitleg, contexten, voorbeelden en oefeningen…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+        <SearchSuggestInput value={searchQuery} onChange={setSearchQuery} corpus={searchCorpus} />
 
         {/* Fases overzicht */}
         {phasesForLevel.length > 0 && (

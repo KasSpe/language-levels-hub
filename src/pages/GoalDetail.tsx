@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Pencil, Save, X, Plus, Trash2, Search } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGrammarData, type LevelKey, type PhaseKey } from "@/hooks/useGrammarData";
@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { getPhaseLabel, levels } from "@/data/phaseLabels";
 import { GoalNavSidebar } from "@/components/GoalNavSidebar";
 import { HighlightText, matchesTokens, useSearchTokens } from "@/components/SearchHighlight";
+import { SearchSuggestInput } from "@/components/SearchSuggestInput";
+import { useMemo } from "react";
 
 type Detail = {
   goal_id: string;
@@ -77,6 +79,24 @@ const GoalDetail = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const searchTokens = useSearchTokens(searchQuery);
 
+  const searchCorpus = useMemo(() => {
+    const texts: string[] = [];
+    if (details) {
+      Object.values(details).forEach((d) => {
+        texts.push(d.explanation, ...d.examples, ...d.exercises, ...d.explicit_contexts, ...d.implicit_contexts);
+      });
+    }
+    if (grammar && goalId) {
+      levels.forEach((lvl) =>
+        phaseKeys.forEach((key) => {
+          const row = grammar.phases.get(`${goalId}|${lvl}|${key}`);
+          if (row) texts.push(row.title, ...row.bullets);
+        })
+      );
+    }
+    return texts;
+  }, [details, grammar, goalId]);
+
   const save = useMutation({
     mutationFn: async (d: Detail) => {
       const { error } = await supabase
@@ -117,16 +137,7 @@ const GoalDetail = () => {
             <p className="text-muted-foreground mt-1">Uitleg, contexten, voorbeelden en oefeningen per niveau.</p>
           </div>
 
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Zoek in uitleg, contexten, voorbeelden en oefeningen…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
+          <SearchSuggestInput value={searchQuery} onChange={setSearchQuery} corpus={searchCorpus} />
 
         <nav className="sticky top-0 z-10 bg-background flex flex-wrap gap-2 mb-8 py-2 border-b border-border">
           {levels.map((lvl) => (
