@@ -198,12 +198,14 @@ const GoalLevelDetail = () => {
           title="Contexten – expliciete grammaticalessen"
           items={d?.explicit_contexts ?? []}
           editing={editing}
+          tokens={searchTokens}
           onChange={(items) => setDraft({ ...draft!, explicit_contexts: items })}
         />
         <ListSection
           title="Contexten – impliciet in andere lessen"
           items={d?.implicit_contexts ?? []}
           editing={editing}
+          tokens={searchTokens}
           onChange={(items) => setDraft({ ...draft!, implicit_contexts: items })}
         />
 
@@ -212,6 +214,7 @@ const GoalLevelDetail = () => {
           title="Voorbeelden"
           items={d?.examples ?? []}
           editing={editing}
+          tokens={searchTokens}
           onChange={(items) => setDraft({ ...draft!, examples: items })}
         />
 
@@ -220,6 +223,7 @@ const GoalLevelDetail = () => {
           title="Oefeningen"
           items={d?.exercises ?? []}
           editing={editing}
+          tokens={searchTokens}
           onChange={(items) => setDraft({ ...draft!, exercises: items })}
         />
         </div>
