@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { getPhaseLabel } from "@/data/phaseLabels";
 import { GoalNavSidebar } from "@/components/GoalNavSidebar";
 import { HighlightText, matchesTokens, useSearchTokens } from "@/components/SearchHighlight";
+import { SearchSuggestInput } from "@/components/SearchSuggestInput";
+import { useMemo } from "react";
 
 type Detail = {
   id?: string;
