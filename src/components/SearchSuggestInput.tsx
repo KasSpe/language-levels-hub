@@ -18,6 +18,7 @@ const buildWordList = (corpus: string[]): string[] => {
   const words = new Set<string>();
   const re = /[A-Za-zÀ-ÿ]{3,}/g;
   for (const text of corpus) {
+    if (!text) continue;
     for (const m of text.matchAll(re)) {
       words.add(m[0].toLowerCase());
     }
