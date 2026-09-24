@@ -12,6 +12,9 @@ const Index = () => {
         <h1 className="text-3xl font-bold text-foreground">Grammatica Overzicht</h1>
         <div className="flex gap-2">
           <Button asChild variant="outline">
+            <Link to="/a1-doelen">A1 Doelen</Link>
+          </Button>
+          <Button asChild variant="outline">
             <Link to="/volgorde">Fases ordenen</Link>
           </Button>
           {isAdmin && (
