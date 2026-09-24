@@ -62,8 +62,8 @@ const A1Goals = () => {
         <Input placeholder="Zoek op code of trefwoord…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-xs" />
       </div>
 
-      <div className="border border-border rounded-lg overflow-x-auto">
-        <div className="min-w-[900px]">
+      <div className="border border-border rounded-lg">
+        <div>
           {/* Sticky header */}
           <div className={`grid ${GRID} sticky top-0 z-10 shadow-sm`}>
             <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20">
