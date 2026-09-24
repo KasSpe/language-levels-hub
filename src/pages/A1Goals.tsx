@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useGrammarData, PhaseKey } from "@/hooks/useGrammarData";
-import { getPhaseLabel } from "@/data/phaseLabels";
+import { useGrammarData, PhaseKey, LevelKey } from "@/hooks/useGrammarData";
+import { getPhaseLabel, levels } from "@/data/phaseLabels";
 
 type Cat = "WW" | "WS" | "ZIN";
 interface A1Goal { code: string; cat: Cat; name: string; goalId?: string }
@@ -39,19 +39,16 @@ const CATS: { key: Cat; label: string }[] = [
   { key: "ZIN", label: "Zinnen" },
 ];
 const PHASES: PhaseKey[] = ["fase1", "fase2", "fase3"];
+const GRID = "grid-cols-[1.5fr_1fr_1fr_1fr_1fr]";
 
 const A1Goals = () => {
   const { data } = useGrammarData();
   const [q, setQ] = useState("");
-  const [open, setOpen] = useState<Set<string>>(new Set());
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     return s ? A1_GOALS.filter((g) => `${g.code} ${g.name}`.toLowerCase().includes(s)) : A1_GOALS;
   }, [q]);
-
-  const toggle = (c: string) =>
-    setOpen((p) => { const n = new Set(p); n.has(c) ? n.delete(c) : n.add(c); return n; });
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -65,56 +62,94 @@ const A1Goals = () => {
         <Input placeholder="Zoek op code of trefwoord…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-xs" />
       </div>
 
-      <div className="space-y-8">
-        {CATS.map((cat) => {
-          const items = filtered.filter((g) => g.cat === cat.key);
-          if (!items.length) return null;
-          return (
-            <section key={cat.key}>
-              <h2 className="text-xl font-semibold mb-3 text-foreground">{cat.label} <span className="text-muted-foreground text-base">({items.length})</span></h2>
-              <div className="rounded-lg border border-border divide-y divide-border">
-                {items.map((g) => {
-                  const isOpen = open.has(g.code);
-                  return (
-                    <div key={g.code}>
-                      <button onClick={() => toggle(g.code)} className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/50">
-                        {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                        <Badge variant="secondary" className="font-mono">{g.code}</Badge>
-                        <span className="font-medium text-foreground">{g.name}</span>
-                      </button>
-                      {isOpen && (
-                        <div className="px-4 pb-4 pl-11">
-                          {g.goalId ? (
-                            <>
-                              <div className="grid gap-3 md:grid-cols-3">
-                                {PHASES.map((p) => {
-                                  const c = data?.phases.get(`${g.goalId}|A1|${p}`);
-                                  return (
-                                    <div key={p} className="rounded-md border border-border bg-muted/20 p-3">
-                                      <div className="text-xs font-semibold text-primary mb-1">{getPhaseLabel(p, "A1")}</div>
-                                      {c?.title && c.title !== "—" && <div className="text-sm font-medium mb-1">{c.title}</div>}
-                                      {c?.bullets?.length ? (
-                                        <ul className="list-disc pl-4 text-sm space-y-0.5">{c.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>
-                                      ) : <span className="text-sm text-muted-foreground">—</span>}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                              <Link to={`/doel/${g.goalId}/A1`} className="inline-block mt-3 text-sm text-primary underline">Meer uitleg →</Link>
-                            </>
-                          ) : (
-                            <p className="text-sm text-muted-foreground">Nog geen inhoud gekoppeld aan dit doel.</p>
-                          )}
-                        </div>
+      <div className="border border-border rounded-lg">
+        <div>
+          {/* Sticky header */}
+          <div className={`grid ${GRID} sticky top-0 z-10 shadow-sm`}>
+            <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20">
+              Grammaticaal doel
+            </div>
+            {levels.map((lvl, i) => (
+              <div
+                key={lvl}
+                className={`bg-primary text-primary-foreground font-semibold p-4 text-center ${
+                  i < levels.length - 1 ? "border-r border-primary-foreground/20" : ""
+                }`}
+              >
+                {lvl}
+              </div>
+            ))}
+          </div>
+
+          {CATS.map((cat) => {
+            const items = filtered.filter((g) => g.cat === cat.key);
+            if (!items.length) return null;
+            return (
+              <div key={cat.key}>
+                {/* Categorie-rij */}
+                <div className={`grid ${GRID} border-t border-border bg-muted/40`}>
+                  <div className="p-3 font-semibold text-foreground col-span-5">
+                    {cat.label} <span className="text-muted-foreground font-normal">({items.length})</span>
+                  </div>
+                </div>
+
+                {/* Doelrijen */}
+                {items.map((g) => (
+                  <div key={g.code} className={`grid ${GRID} border-t border-border`}>
+                    <div className="p-3 border-r border-border bg-muted/10">
+                      <div className="flex items-start gap-2 flex-wrap">
+                        <Badge variant="secondary" className="font-mono text-xs">{g.code}</Badge>
+                        <span className="font-medium text-foreground text-sm">{g.name}</span>
+                      </div>
+                      {g.goalId && (
+                        <Link
+                          to={`/doel/${g.goalId}`}
+                          className="mt-1 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                        >
+                          Meer uitleg <ExternalLink className="h-3 w-3" />
+                        </Link>
                       )}
                     </div>
-                  );
-                })}
+                    {levels.map((lvl: LevelKey, i) => (
+                      <div key={lvl} className={`p-3 text-sm ${i < levels.length - 1 ? "border-r border-border" : ""}`}>
+                        {g.goalId ? (
+                          <div className="flex flex-col gap-2">
+                            {PHASES.map((p) => {
+                              const c = data?.phases.get(`${g.goalId}|${lvl}|${p}`);
+                              const has = c && (c.title || c.bullets.length > 0);
+                              return (
+                                <div key={p}>
+                                  <div className="font-medium text-foreground text-xs">{getPhaseLabel(p, lvl)}</div>
+                                  {has ? (
+                                    <>
+                                      {c.title && c.title !== "—" && (
+                                        <div className="text-muted-foreground italic text-xs">{c.title}</div>
+                                      )}
+                                      {c.bullets.length > 0 && (
+                                        <ul className="list-disc pl-4 text-muted-foreground text-xs mt-0.5 space-y-0.5">
+                                          {c.bullets.map((b, bi) => <li key={bi}>{b}</li>)}
+                                        </ul>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <div className="text-muted-foreground/60">—</div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground/60">—</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
-            </section>
-          );
-        })}
-        {!filtered.length && <p className="text-muted-foreground">Geen doelen gevonden.</p>}
+            );
+          })}
+        </div>
+        {!filtered.length && <p className="p-4 text-muted-foreground">Geen doelen gevonden.</p>}
       </div>
     </div>
   );
