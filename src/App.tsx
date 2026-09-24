@@ -10,6 +10,7 @@ import Admin from "./pages/Admin";
 import GoalLevelDetail from "./pages/GoalLevelDetail";
 import GoalDetail from "./pages/GoalDetail";
 import PhaseOrder from "./pages/PhaseOrder";
+import A1Goals from "./pages/A1Goals";
 import { AuthProvider } from "./hooks/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/doel/:goalId" element={<GoalDetail />} />
             <Route path="/doel/:goalId/:level" element={<GoalLevelDetail />} />
             <Route path="/volgorde" element={<PhaseOrder />} />
+            <Route path="/a1-doelen" element={<A1Goals />} />
             <Route
               path="/admin"
               element={
