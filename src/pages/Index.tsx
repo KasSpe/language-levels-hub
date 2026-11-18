@@ -7,10 +7,10 @@ const Index = () => {
   const { user, isAdmin } = useAuth();
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8">
         <h1 className="text-3xl font-bold text-foreground">Grammatica Overzicht</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline">
             <Link to="/a1-doelen">A1 Doelen</Link>
           </Button>

@@ -118,7 +118,9 @@ const GrammarTable = ({ editable = false }: Props) => {
   };
 
   const isZoomed = activeColumn !== null;
-  const getGridCols = () => (isZoomed ? "grid-cols-[2fr_3fr]" : "grid-cols-[1.5fr_1fr_1fr_1fr_1fr]");
+  const getGridCols = () => (isZoomed
+    ? "grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
+    : "grid-cols-1 md:grid-cols-[minmax(0,1.5fr)_repeat(4,minmax(0,1fr))]");
 
   const allOpen = openDomains.length === domains.length;
 
@@ -148,9 +150,9 @@ const GrammarTable = ({ editable = false }: Props) => {
           )}
         </button>
       </div>
-      <div className="border border-border rounded-lg">
+      <div className="border border-border rounded-lg break-words">
         {/* Header */}
-        <div className={`grid ${getGridCols()} gap-0 transition-all sticky top-0 z-10 shadow-sm`}>
+        <div className={`hidden md:grid ${getGridCols()} gap-0 transition-all sticky top-0 z-10 shadow-sm`}>
           <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20 rounded-tl-lg">
             Grammaticaal doel
           </div>
@@ -213,7 +215,7 @@ const GrammarTable = ({ editable = false }: Props) => {
                       : "—"}
                   </div>
                 ) : (
-                  <div className="col-span-4 p-4 text-sm text-muted-foreground">
+                  <div className="col-span-1 md:col-span-4 p-4 text-sm text-muted-foreground">
                     {domainGoals.length > 0
                       ? domainGoals.map((g, i) => (
                           <span key={g.id}>
@@ -244,7 +246,7 @@ const GrammarTable = ({ editable = false }: Props) => {
                       highlightedGoal === goal.id ? "bg-primary/5" : ""
                     }`}
                   >
-                    <div className="p-3 pl-10 border-r border-border font-medium text-foreground bg-muted/10">
+                    <div className="p-3 md:pl-10 border-b md:border-b-0 md:border-r border-border font-medium text-foreground bg-muted/10">
                       <div>{goal.name}</div>
                       <Link
                         to={`/doel/${goal.id}`}
@@ -255,13 +257,15 @@ const GrammarTable = ({ editable = false }: Props) => {
                     </div>
                     {isZoomed ? (
                       <div className="p-3">
+                        <div className="mb-3 font-semibold text-foreground md:hidden">{activeColumn}</div>
                         <OfferingTypeBadge offering={offerings.get(`${goal.id}|${activeColumn}`)} />
                         <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} horizontal />
                       </div>
                     ) : (
                       <>
                         {columns.map((lvl, i) => (
-                          <div key={lvl} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
+                          <div key={lvl} className={`p-3 border-b md:border-b-0 border-border ${i < columns.length - 1 ? "md:border-r" : ""}`}>
+                            <div className="mb-3 font-semibold text-foreground md:hidden">{lvl}</div>
                             <OfferingTypeBadge offering={offerings.get(`${goal.id}|${lvl}`)} />
                             <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
                           </div>

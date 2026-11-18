@@ -40,7 +40,7 @@ const CATS: { key: Cat; label: string }[] = [
   { key: "ZIN", label: "Zinnen" },
 ];
 const PHASES: PhaseKey[] = ["fase1", "fase2", "fase3"];
-const GRID = "grid-cols-[1.5fr_1fr_1fr_1fr_1fr]";
+const GRID = "grid-cols-1 md:grid-cols-[minmax(0,1.5fr)_repeat(4,minmax(0,1fr))]";
 
 const A1Goals = () => {
   const { data } = useGrammarData();
@@ -52,7 +52,7 @@ const A1Goals = () => {
   }, [q]);
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <Button asChild variant="ghost" size="sm">
@@ -60,13 +60,13 @@ const A1Goals = () => {
           </Button>
           <h1 className="text-3xl font-bold text-foreground">A1 Doelen</h1>
         </div>
-        <Input placeholder="Zoek op code of trefwoord…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-xs" />
+        <Input placeholder="Zoek op code of trefwoord…" value={q} onChange={(e) => setQ(e.target.value)} className="w-full sm:max-w-xs" />
       </div>
 
-      <div className="border border-border rounded-lg">
+      <div className="border border-border rounded-lg break-words">
         <div>
           {/* Sticky header */}
-          <div className={`grid ${GRID} sticky top-0 z-10 shadow-sm`}>
+          <div className={`hidden md:grid ${GRID} sticky top-0 z-10 shadow-sm`}>
             <div className="bg-primary text-primary-foreground font-semibold p-4 border-r border-primary-foreground/20">
               Grammaticaal doel
             </div>
@@ -89,7 +89,7 @@ const A1Goals = () => {
               <div key={cat.key}>
                 {/* Categorie-rij */}
                 <div className={`grid ${GRID} border-t border-border bg-muted/40`}>
-                  <div className="p-3 font-semibold text-foreground col-span-5">
+                  <div className="p-3 font-semibold text-foreground col-span-1 md:col-span-5">
                     {cat.label} <span className="text-muted-foreground font-normal">({items.length})</span>
                   </div>
                 </div>
@@ -97,7 +97,7 @@ const A1Goals = () => {
                 {/* Doelrijen */}
                 {items.map((g) => (
                   <div key={g.code} className={`grid ${GRID} border-t border-border`}>
-                    <div className="p-3 border-r border-border bg-muted/10">
+                    <div className="p-3 border-b md:border-b-0 md:border-r border-border bg-muted/10">
                       <div className="flex items-start gap-2 flex-wrap">
                         <Badge variant="secondary" className="font-mono text-xs">{g.code}</Badge>
                         <span className="font-medium text-foreground text-sm">{g.name}</span>
@@ -112,7 +112,8 @@ const A1Goals = () => {
                       )}
                     </div>
                     {levels.map((lvl: LevelKey, i) => (
-                      <div key={lvl} className={`p-3 text-sm ${i < levels.length - 1 ? "border-r border-border" : ""}`}>
+                      <div key={lvl} className={`p-3 text-sm border-b md:border-b-0 border-border ${i < levels.length - 1 ? "md:border-r" : ""}`}>
+                        <div className="mb-3 font-semibold text-foreground md:hidden">{lvl}</div>
                         <OfferingTypeBadge offering={g.goalId ? data?.offerings.get(`${g.goalId}|${lvl}`) : undefined} />
                         {g.goalId ? (
                           <div className="flex flex-col gap-2">
