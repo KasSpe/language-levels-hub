@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useGrammarData, PhaseKey, LevelKey } from "@/hooks/useGrammarData";
 import { getPhaseLabel, levels } from "@/data/phaseLabels";
+import { OfferingTypeBadge } from "@/components/OfferingTypeBadge";
 
 type Cat = "WW" | "WS" | "ZIN";
 interface A1Goal { code: string; cat: Cat; name: string; goalId?: string }
@@ -112,6 +113,7 @@ const A1Goals = () => {
                     </div>
                     {levels.map((lvl: LevelKey, i) => (
                       <div key={lvl} className={`p-3 text-sm ${i < levels.length - 1 ? "border-r border-border" : ""}`}>
+                        <OfferingTypeBadge offering={g.goalId ? data?.offerings.get(`${g.goalId}|${lvl}`) : undefined} />
                         {g.goalId ? (
                           <div className="flex flex-col gap-2">
                             {PHASES.map((p) => {

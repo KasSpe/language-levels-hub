@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight, Pencil, ExternalLink } from "lucide-react";
 import { useGrammarData, type LevelKey, type PhaseKey, type PhaseContentRow } from "@/hooks/useGrammarData";
 import { getPhaseLabel, levels as allLevels } from "@/data/phaseLabels";
 import PhaseEditDialog from "./PhaseEditDialog";
+import { OfferingTypeBadge } from "./OfferingTypeBadge";
 
 interface Props {
   editable?: boolean;
@@ -97,7 +98,7 @@ const GrammarTable = ({ editable = false }: Props) => {
   if (error) return <div className="text-destructive">Fout bij laden van data.</div>;
   if (!data) return null;
 
-  const { domains, goals, phases: phasesMap } = data;
+  const { domains, goals, phases: phasesMap, offerings } = data;
   const toggleDomain = (id: string) => {
     setOpenDomains((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
@@ -254,12 +255,14 @@ const GrammarTable = ({ editable = false }: Props) => {
                     </div>
                     {isZoomed ? (
                       <div className="p-3">
+                        <OfferingTypeBadge offering={offerings.get(`${goal.id}|${activeColumn}`)} />
                         <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} horizontal />
                       </div>
                     ) : (
                       <>
                         {columns.map((lvl, i) => (
                           <div key={lvl} className={`p-3 ${i < columns.length - 1 ? "border-r border-border" : ""}`}>
+                            <OfferingTypeBadge offering={offerings.get(`${goal.id}|${lvl}`)} />
                             <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
                           </div>
                         ))}

@@ -28,18 +28,27 @@ export interface PhaseContentRow {
   weight: number | null;
 }
 
+export interface OfferingContextRow {
+  goal_id: string;
+  level: LevelKey;
+  explicit_contexts: string[];
+  implicit_contexts: string[];
+}
+
 export const useGrammarData = () => {
   return useQuery({
     queryKey: ["grammar-data"],
     queryFn: async () => {
-      const [domainsRes, goalsRes, phasesRes] = await Promise.all([
+      const [domainsRes, goalsRes, phasesRes, detailsRes] = await Promise.all([
         supabase.from("domains").select("*").order("sort_order"),
         supabase.from("goals").select("*").order("sort_order"),
         supabase.from("phase_content").select("*"),
+        supabase.from("goal_level_detail").select("goal_id, level, explicit_contexts, implicit_contexts"),
       ]);
       if (domainsRes.error) throw domainsRes.error;
       if (goalsRes.error) throw goalsRes.error;
       if (phasesRes.error) throw phasesRes.error;
+      if (detailsRes.error) throw detailsRes.error;
 
       const phasesByKey = new Map<string, PhaseContentRow>();
       (phasesRes.data ?? []).forEach((p: any) => {
@@ -50,10 +59,21 @@ export const useGrammarData = () => {
         });
       });
 
+      const offeringsByKey = new Map<string, OfferingContextRow>();
+      (detailsRes.data ?? []).forEach((d: any) => {
+        offeringsByKey.set(`${d.goal_id}|${d.level}`, {
+          goal_id: d.goal_id,
+          level: d.level,
+          explicit_contexts: Array.isArray(d.explicit_contexts) ? d.explicit_contexts : [],
+          implicit_contexts: Array.isArray(d.implicit_contexts) ? d.implicit_contexts : [],
+        });
+      });
+
       return {
         domains: (domainsRes.data ?? []) as DomainRow[],
         goals: (goalsRes.data ?? []) as GoalRow[],
         phases: phasesByKey,
+        offerings: offeringsByKey,
       };
     },
   });
