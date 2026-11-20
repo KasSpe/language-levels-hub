@@ -130,7 +130,7 @@ const A1Goals = () => {
                                       )}
                                       {c.bullets.length > 0 && (
                                         <ul className="list-disc pl-4 text-muted-foreground text-xs mt-0.5 space-y-0.5">
-                                          {c.bullets.map((b, bi) => <li key={bi}>{b}</li>)}
+                                          {c.bullets.map((b, bi) => <li key={bi} className="[overflow-wrap:anywhere]">{b}</li>)}
                                         </ul>
                                       )}
                                     </>

@@ -49,7 +49,7 @@ const PhaseList = ({
                 {row && row.bullets.length > 0 && (
                   <ul className="list-disc pl-5 text-muted-foreground mt-1">
                     {row.bullets.map((b, i) => (
-                      <li key={i}>{b}</li>
+                      <li key={i} className="[overflow-wrap:anywhere]">{b}</li>
                     ))}
                   </ul>
                 )}
