@@ -158,6 +158,9 @@ const GoalLevelDetail = () => {
 
         <SearchSuggestInput value={searchQuery} onChange={setSearchQuery} corpus={searchCorpus} />
 
+              {phasesForLevel.length === 0 && !editing ? (
+                <div className="mb-6 rounded-lg border border-dashed border-border p-5 text-muted-foreground italic">Deze vaardigheid wordt niet behandeld op {level}.</div>
+              ) : (<>
         {/* Fases overzicht */}
         {phasesForLevel.length > 0 && (
           <section className="mb-8 border border-border rounded-lg p-5 bg-muted/20">
@@ -240,6 +243,7 @@ const GoalLevelDetail = () => {
           tokens={searchTokens}
           onChange={(items) => setDraft({ ...draft!, exercises: items })}
         />
+              </>)}
         </div>
       </div>
     </div>

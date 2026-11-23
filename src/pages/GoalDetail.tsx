@@ -183,6 +183,9 @@ const GoalDetail = () => {
                   </div>
                 )}
               </div>
+              {phasesForLevel.length === 0 && !isEditing ? (
+                <div className="mb-6 rounded-lg border border-dashed border-border p-5 text-muted-foreground italic">Deze vaardigheid wordt niet behandeld op {lvl}.</div>
+              ) : (<>
 
               {phasesForLevel.length > 0 && (
                 <div className="mb-6 border border-border rounded-lg p-5 bg-muted/20">
@@ -259,6 +262,7 @@ const GoalDetail = () => {
                 tokens={searchTokens}
                 onChange={(items) => setDraft({ ...draft!, exercises: items })}
               />
+              </>)}
             </section>
           );
         })}
