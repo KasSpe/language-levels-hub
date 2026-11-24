@@ -180,7 +180,15 @@ const GrammarTable = ({ editable = false }: Props) => {
 
         {/* Rows */}
         {domains.map((domain) => {
-          const domainGoals = goals.filter((g) => g.domain_id === domain.id);
+          const isTreated = (goalId: string, lvl: LevelKey) =>
+            phaseKeys.some((pk) => {
+              const r = phasesMap.get(`${goalId}|${lvl}|${pk}`);
+              return !!r && (!!(r.title && r.title !== "—") || r.bullets.length > 0);
+            });
+          const domainGoals = goals.filter(
+            (g) => g.domain_id === domain.id && (!isZoomed || editable || isTreated(g.id, activeColumn!))
+          );
+          if (isZoomed && domainGoals.length === 0) return null;
           const domainOpen = openDomains.includes(domain.id);
           return (
             <div key={domain.id}>
