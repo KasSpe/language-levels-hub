@@ -16,7 +16,7 @@ const A1_GOALS: A1Goal[] = [
   { code: "A1Gram02WW", cat: "WW", name: "Onvoltooid tegenwoordige tijd - OTT (infinitief en stam)", goalId: "ott" },
   { code: "A1Gram03WS", cat: "WS", name: "Persoonlijk voornaamwoord", goalId: "persoonlijk-vnw" },
   { code: "A1Gram04ZIN", cat: "ZIN", name: "Gewone zin (onderwerp-pv-rest)", goalId: "enkelvoudige-zinnen" },
-  { code: "A1Gram05WS", cat: "WS", name: "Zelfstandig naamwoord meervoud (+en, +s, +'s)", goalId: "znw" },
+  { code: "A1Gram05WS", cat: "WS", name: "Zelfstandig naamwoord meervoud (+en, +s, +'s)", goalId: "znw-meervoud" },
   { code: "A1Gram06WS", cat: "WS", name: "Bepaald lidwoord", goalId: "lidwoord" },
   { code: "A1Gram07WS", cat: "WS", name: "Voorzetsel (tijd, middel, plaats, richting)", goalId: "voorzetsel" },
   { code: "A1Gram08ZIN", cat: "ZIN", name: "Ja/nee-vraag", goalId: "vraagzinnen" },
@@ -27,11 +27,11 @@ const A1_GOALS: A1Goal[] = [
   { code: "A1Gram13WW", cat: "WW", name: "Imperatief", goalId: "gebiedende-wijs" },
   { code: "A1Gram14WS", cat: "WS", name: "Bijvoeglijk naamwoord", goalId: "bn" },
   { code: "A1Gram15WS", cat: "WS", name: "Bezittelijk voornaamwoord", goalId: "bezittelijk-vnw" },
-  { code: "A1Gram16WS", cat: "WS", name: "Persoonlijk voornaamwoord als voorwerp", goalId: "persoonlijk-vnw" },
+  { code: "A1Gram16WS", cat: "WS", name: "Persoonlijk voornaamwoord als voorwerp", goalId: "persoonlijk-vnw-voorwerp" },
   { code: "A1Gram17WS", cat: "WS", name: "Aanwijzend voornaamwoord", goalId: "aanwijzend-vnw" },
-  { code: "A1Gram18WS", cat: "WS", name: "Verkleinwoorden", goalId: "znw" },
+  { code: "A1Gram18WS", cat: "WS", name: "Verkleinwoorden", goalId: "znw-verkleinwoord" },
   { code: "A1Gram19WS", cat: "WS", name: "Onbepaald lidwoord", goalId: "lidwoord" },
-  { code: "A1Gram20WS", cat: "WS", name: "Trappen van vergelijking", goalId: "bn" },
+  { code: "A1Gram20WS", cat: "WS", name: "Trappen van vergelijking", goalId: "bn-trappen" },
 ];
 
 const CATS: { key: Cat; label: string }[] = [
