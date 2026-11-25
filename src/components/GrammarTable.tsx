@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight, Pencil, ExternalLink } from "lucide-react";
 import { useGrammarData, type LevelKey, type PhaseKey, type PhaseContentRow } from "@/hooks/useGrammarData";
 import { getPhaseLabel, levels as allLevels } from "@/data/phaseLabels";
+import { getOverviewPhaseContent } from "@/lib/overviewContent";
 import PhaseEditDialog from "./PhaseEditDialog";
-import { OfferingTypeBadge } from "./OfferingTypeBadge";
 
 interface Props {
   editable?: boolean;
@@ -32,47 +32,52 @@ const PhaseList = ({
   const [editing, setEditing] = useState<PhaseKey | null>(null);
   const current = editing ? phasesMap.get(`${goalId}|${level}|${editing}`) : undefined;
 
+  const items = phaseKeys.map((key) => ({
+    key,
+    label: getPhaseLabel(key, level),
+    content: getOverviewPhaseContent(phasesMap.get(`${goalId}|${level}|${key}`)),
+  }));
+  const visibleItems = editable ? items : items.filter((item) => item.content.hasContent);
+
   return (
     <div className={horizontal ? "grid grid-cols-3 gap-3 text-sm" : "flex flex-col gap-2 text-sm"}>
-      {phaseKeys.map((pk) => {
-        const p = { key: pk, label: getPhaseLabel(pk, level) };
-        const row = phasesMap.get(`${goalId}|${level}|${p.key}`);
-        const hasContent = row && (row.title || row.bullets.length > 0);
-        return (
-          <div key={p.key} className="group">
-            <div className="flex items-start gap-2">
-              <div className="flex-1">
-                <div className="font-medium text-foreground">{p.label}</div>
-                {row?.title && row.title !== "—" && (
-                  <div className="text-muted-foreground italic">{row.title}</div>
-                )}
-                {row && row.bullets.length > 0 && (
-                  <ul className="list-disc pl-5 text-muted-foreground mt-1">
-                    {row.bullets.map((b, i) => (
-                      <li key={i} className="[overflow-wrap:anywhere]">{b}</li>
-                    ))}
-                  </ul>
-                )}
-                {!hasContent && !editable && (
-                  <div className="text-muted-foreground/60">—</div>
-                )}
-              </div>
-              {editable && (
-                <button
-                  className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-muted transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditing(p.key);
-                  }}
-                  aria-label="Bewerken"
-                >
-                  <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-                </button>
+      {visibleItems.map((item) => (
+        <div key={item.key} className="group">
+          <div className="flex items-start gap-2">
+            <div className="flex-1">
+              {item.content.title && (
+                <div className="text-muted-foreground">{item.content.title}</div>
+              )}
+              {item.content.bullets.length > 0 && (
+                <ul className="list-disc pl-5 text-muted-foreground mt-1">
+                  {item.content.bullets.map((bullet, index) => (
+                    <li key={index} className="[overflow-wrap:anywhere]">{bullet}</li>
+                  ))}
+                </ul>
+              )}
+              {!item.content.hasContent && editable && (
+                <div className="text-muted-foreground/60">—</div>
               )}
             </div>
+            {editable && (
+              <button
+                className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-muted transition-opacity"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditing(item.key);
+                }}
+                aria-label={`${item.label} bewerken`}
+                title={item.label}
+              >
+                <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+            )}
           </div>
-        );
-      })}
+        </div>
+      ))}
+      {!editable && visibleItems.length === 0 && (
+        <div className="text-muted-foreground/60">—</div>
+      )}
       {editable && editing && (
         <PhaseEditDialog
           open={!!editing}
@@ -183,7 +188,7 @@ const GrammarTable = ({ editable = false }: Props) => {
           const isTreated = (goalId: string, lvl: LevelKey) =>
             phaseKeys.some((pk) => {
               const r = phasesMap.get(`${goalId}|${lvl}|${pk}`);
-              return !!r && (!!(r.title && r.title !== "—") || r.bullets.length > 0);
+              return getOverviewPhaseContent(r).hasContent;
             });
           const domainGoals = goals.filter(
             (g) => g.domain_id === domain.id && (!isZoomed || editable || isTreated(g.id, activeColumn!))
@@ -266,7 +271,6 @@ const GrammarTable = ({ editable = false }: Props) => {
                     {isZoomed ? (
                       <div className="p-3">
                         <div className="mb-3 font-semibold text-foreground md:hidden">{activeColumn}</div>
-                        <OfferingTypeBadge offering={offerings.get(`${goal.id}|${activeColumn}`)} />
                         <PhaseList goalId={goal.id} goalName={goal.name} level={activeColumn!} phasesMap={phasesMap} editable={editable} horizontal />
                       </div>
                     ) : (
@@ -274,7 +278,6 @@ const GrammarTable = ({ editable = false }: Props) => {
                         {columns.map((lvl, i) => (
                           <div key={lvl} className={`p-3 border-b md:border-b-0 border-border ${i < columns.length - 1 ? "md:border-r" : ""}`}>
                             <div className="mb-3 font-semibold text-foreground md:hidden">{lvl}</div>
-                            <OfferingTypeBadge offering={offerings.get(`${goal.id}|${lvl}`)} />
                             <PhaseList goalId={goal.id} goalName={goal.name} level={lvl} phasesMap={phasesMap} editable={editable} />
                           </div>
                         ))}

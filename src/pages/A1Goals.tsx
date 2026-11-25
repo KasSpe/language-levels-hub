@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useGrammarData, PhaseKey, LevelKey } from "@/hooks/useGrammarData";
-import { getPhaseLabel, levels } from "@/data/phaseLabels";
-import { OfferingTypeBadge } from "@/components/OfferingTypeBadge";
+import { levels } from "@/data/phaseLabels";
+import { getOverviewPhaseContent } from "@/lib/overviewContent";
 
 type Cat = "WW" | "WS" | "ZIN";
 interface A1Goal { code: string; cat: Cat; name: string; goalId?: string }
@@ -111,41 +111,40 @@ const A1Goals = () => {
                         </Link>
                       )}
                     </div>
-                    {levels.map((lvl: LevelKey, i) => (
-                      <div key={lvl} className={`p-3 text-sm border-b md:border-b-0 border-border ${i < levels.length - 1 ? "md:border-r" : ""}`}>
-                        <div className="mb-3 font-semibold text-foreground md:hidden">{lvl}</div>
-                        <OfferingTypeBadge offering={g.goalId ? data?.offerings.get(`${g.goalId}|${lvl}`) : undefined} />
-                        {g.goalId ? (
-                          <div className="flex flex-col gap-2">
-                            {PHASES.map((p) => {
-                              const c = data?.phases.get(`${g.goalId}|${lvl}|${p}`);
-                              const has = c && (c.title || c.bullets.length > 0);
-                              return (
-                                <div key={p}>
-                                  <div className="font-medium text-foreground text-xs">{getPhaseLabel(p, lvl)}</div>
-                                  {has ? (
-                                    <>
-                                      {c.title && c.title !== "—" && (
-                                        <div className="text-muted-foreground italic text-xs">{c.title}</div>
-                                      )}
-                                      {c.bullets.length > 0 && (
-                                        <ul className="list-disc pl-4 text-muted-foreground text-xs mt-0.5 space-y-0.5">
-                                          {c.bullets.map((b, bi) => <li key={bi} className="[overflow-wrap:anywhere]">{b}</li>)}
-                                        </ul>
-                                      )}
-                                    </>
-                                  ) : (
-                                    <div className="text-muted-foreground/60">—</div>
+                    {levels.map((lvl: LevelKey, i) => {
+                      const phaseItems = PHASES.map((phase) => ({
+                        phase,
+                        content: getOverviewPhaseContent(
+                          g.goalId ? data?.phases.get(`${g.goalId}|${lvl}|${phase}`) : undefined,
+                        ),
+                      })).filter((item) => item.content.hasContent);
+
+                      return (
+                        <div key={lvl} className={`p-3 text-sm border-b md:border-b-0 border-border ${i < levels.length - 1 ? "md:border-r" : ""}`}>
+                          <div className="mb-3 font-semibold text-foreground md:hidden">{lvl}</div>
+                          {phaseItems.length > 0 ? (
+                            <div className="flex flex-col gap-2">
+                              {phaseItems.map((item) => (
+                                <div key={item.phase}>
+                                  {item.content.title && (
+                                    <div className="text-muted-foreground text-xs">{item.content.title}</div>
+                                  )}
+                                  {item.content.bullets.length > 0 && (
+                                    <ul className="list-disc pl-4 text-muted-foreground text-xs mt-0.5 space-y-0.5">
+                                      {item.content.bullets.map((bullet, bulletIndex) => (
+                                        <li key={bulletIndex} className="[overflow-wrap:anywhere]">{bullet}</li>
+                                      ))}
+                                    </ul>
                                   )}
                                 </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground/60">—</span>
-                        )}
-                      </div>
-                    ))}
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground/60">—</span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 ))}
               </div>
