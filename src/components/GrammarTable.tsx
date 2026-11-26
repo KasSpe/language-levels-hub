@@ -103,7 +103,7 @@ const GrammarTable = ({ editable = false }: Props) => {
   if (error) return <div className="text-destructive">Fout bij laden van data.</div>;
   if (!data) return null;
 
-  const { domains, goals, phases: phasesMap, offerings } = data;
+  const { domains, goals, phases: phasesMap } = data;
   const toggleDomain = (id: string) => {
     setOpenDomains((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
